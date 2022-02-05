@@ -53,6 +53,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: ${{ secrets.LINTER_VALIDATE_ALL_CODEBASE }}
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_NATURAL_LANGUAGE: false
 
           ## ==================================================
           ## Exclude/Include files
