@@ -11,7 +11,7 @@ output "public_key" {
 }
 
 output "private_key" {
-  value     = var.public_key ? "" : tls_private_key.main[0].private_key_pem
+  value     = try(tls_private_key.main[0].private_key_pem, "")
   sensitive = true
 }
 
