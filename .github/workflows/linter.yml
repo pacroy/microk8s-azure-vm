@@ -1,0 +1,99 @@
+---
+###########################
+###########################
+## Linter GitHub Actions ##
+###########################
+###########################
+name: Lint Code Base
+
+#
+# Documentation:
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions
+#
+
+#############################
+# Start the job on all push #
+#############################
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+###############
+# Set the Job #
+###############
+jobs:
+  build:
+    # Name the Job
+    name: Lint Code Base
+    # Set the agent to run on
+    runs-on: ubuntu-latest
+
+    ##################
+    # Load all steps #
+    ##################
+    steps:
+      ##########################
+      # Checkout the code base #
+      ##########################
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: ${{ secrets.LINTER_VALIDATE_ALL_CODEBASE }}
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          ## ==================================================
+          ## Exclude/Include files
+          ## ==================================================
+          ## Uncomment this section to either exclude/include only files to scan
+          ## Reference: https://github.com/github/super-linter#environment-variables
+          ## ==================================================
+          # FILTER_REGEX_EXCLUDE: '(.*\.[mM][dD]|\.github/.*)'
+          # FILTER_REGEX_INCLUDE: '(.*\.[mM][dD]|\.github/.*)'
+          
+          ## ==================================================
+          ## Python
+          ## ==================================================
+          ## Uncomment this section to use only Pylint and disable all others
+          ## Reference: https://github.com/github/super-linter#environment-variables
+          ## ==================================================
+          # VALIDATE_PYTHON_BLACK: false
+          # VALIDATE_PYTHON_FLAKE8: false
+          # VALIDATE_PYTHON_ISORT: false
+          # VALIDATE_PYTHON_MYPY: false
+
+          ## ==================================================
+          ## OpenShift
+          ## ==================================================
+          ## Uncomment this section to disable YAML schema validation for OpenShift YAML files
+          ## Reference: https://github.com/github/super-linter#environment-variables
+          ## ==================================================
+          # VALIDATE_KUBERNETES_KUBEVAL: false
+
+          ## ==================================================
+          ## Shell script
+          ## ==================================================
+          ## Uncomment this section to exclude some rules globally
+          ## Reference: https://github.com/koalaman/shellcheck/wiki/Ignore
+          ## ==================================================
+          # SHELLCHECK_OPTS: "--exclude=SC2016,SC1004"
+
+          ## ==================================================
+          ## Natural Language
+          ## ==================================================
+          ## Uncomment this section to disable natural language validation (textlint)
+          ## Reference: https://github.com/github/super-linter#environment-variables
+          ## ==================================================
+          # VALIDATE_NATURAL_LANGUAGE: false

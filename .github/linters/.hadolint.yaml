@@ -1,0 +1,11 @@
+---
+##########################
+## Hadolint config file ##
+##########################
+ignored:
+  # - SC2086  # Double quote to prevent globbing and word splitting
+  # - DL3041  # Specify version with `dnf install -y <package>-<version>`
+  # - SC2039  # In POSIX sh, set option pipefail is undefined.
+  # - SC2039  # In POSIX sh, string replacement is undefined.
+  # - DL4006  # Set the SHELL option -o pipefail before RUN with a pipe in it. If you are using /bin/sh in an alpine image or if your shell is symlinked to busybox then consider explicitly setting your SHELL to /bin/ash, or disable this check
+  
