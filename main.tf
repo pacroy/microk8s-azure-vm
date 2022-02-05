@@ -48,7 +48,7 @@ resource "azurerm_virtual_network" "main" {
   }
 }
 
-resource "azurerm_network_interface" "vm_main" {
+resource "azurerm_network_interface" "main" {
   name                = module.naming.network_interface.name
   resource_group_name = local.resource_group_name
   location            = local.location
@@ -69,7 +69,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   size                  = "Standard_D2s_v5"
   admin_username        = "azureuser"
-  network_interface_ids = [azurerm_network_interface.vm_main.id]
+  network_interface_ids = [azurerm_network_interface.main.id]
 
   admin_ssh_key {
     username   = "azureuser"
