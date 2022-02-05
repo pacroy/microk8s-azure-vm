@@ -34,11 +34,25 @@ resource "azurerm_network_security_rule" "allow_https" {
   name                       = "AllowHTTPsFromInternet"
 }
 
+resource "azurerm_virtual_network" "main" {
+  name                = "vnet-microk8s-nprd-01"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+
+  address_space       = ["172.16.0.0/16"]
+
+  subnet {
+    name           = "default"
+    address_prefix = "172.16.0.0/24"
+    security_group = azurerm_network_security_group.default.id
+  }
+}
+
 resource "azurerm_public_ip" "load_balancer" {
   name                = "pip-microk8s-nprd-01-lbe"
   resource_group_name = local.resource_group_name
   location            = local.location
-  
+
   allocation_method   = "Static"
   availability_zone   = "No-Zone"
   domain_name_label   = "fh7kxp6"
