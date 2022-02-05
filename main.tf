@@ -42,7 +42,7 @@ resource "azurerm_virtual_network" "main" {
   address_space = ["172.16.0.0/16"]
 
   subnet {
-    name           = join("-", [module.naming.subnet.name, "default"])
+    name           = "default"
     address_prefix = "172.16.0.0/24"
     security_group = azurerm_network_security_group.default.id
   }
