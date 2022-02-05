@@ -5,7 +5,7 @@ data "azurerm_resource_group" "main" {
 resource "random_string" "char7" {
   length  = 7
   special = false
-  upper = false
+  upper   = false
 }
 
 locals {
