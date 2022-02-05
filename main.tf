@@ -48,19 +48,19 @@ resource "azurerm_virtual_network" "main" {
   }
 }
 
-# resource "azurerm_network_interface" "vm_main" {
-#   name                = "vm-microk8s-nprd-660"
-#   resource_group_name = local.resource_group_name
-#   location            = local.location
+resource "azurerm_network_interface" "vm_main" {
+  name                = module.naming.network_interface.name
+  resource_group_name = local.resource_group_name
+  location            = local.location
 
-#   enable_accelerated_networking = true
+  enable_accelerated_networking = true
 
-#   ip_configuration {
-#     name                          = "ipconfig1"
-#     subnet_id                     = azurerm_subnet.default.id
-#     private_ip_address_allocation = "Dynamic"
-#   }
-# }
+  ip_configuration {
+    name                          = "ipconfig1"
+    subnet_id                     = one(azurerm_virtual_network.main.subnet).id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
 
 # resource "azurerm_linux_virtual_machine" "main" {
 #   name                = "vm-microk8s-nprd-01"
