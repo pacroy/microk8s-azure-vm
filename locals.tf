@@ -9,7 +9,7 @@ resource "random_string" "id" {
 }
 
 resource "tls_private_key" "main" {
-  count     = var.public_key ? 1 : 0
+  count     = var.public_key != "" ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = "4096"
 }
