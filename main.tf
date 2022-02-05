@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "default" {
   name                = "nsg-microk8s-nprd-01-default"
-  location            = "southeastasia"
+  location            = local.location
   resource_group_name = local.resource_group_name
 }
 
@@ -32,4 +32,17 @@ resource "azurerm_network_security_rule" "allow_https" {
   access                     = "Allow"
   priority                   = 110
   name                       = "AllowHTTPsFromInternet"
+}
+
+resource "azurerm_public_ip" "load_balancer" {
+  name                = "pip-microk8s-nprd-01-lbe"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+  
+  allocation_method   = "Static"
+  availability_zone   = "No-Zone"
+  domain_name_label   = "fh7kxp6"
+  sku                 = "Standard"
+  sku_tier            = "Regional"
+  ip_version          = "IPv4"
 }
