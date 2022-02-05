@@ -10,6 +10,12 @@ resource "random_string" "instance_id" {
 locals {
   resource_group_name = var.resource_group_name
   location            = data.azurerm_resource_group.main.location
-  instance_id         = random_string.instance_id.result
-  instance_name       = coalesce(var.instance_name, "microk8s-${local.instance_id}")
+  random_char7        = random_string.instance_id.result
+  suffix              = coalesce(var.suffix, local.random_char7)
+}
+
+module "naming" {
+  source  = "Azure/naming/azurerm"
+  version = "~> 0.1.1"
+  suffix  = [local.suffix]
 }

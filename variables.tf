@@ -2,6 +2,6 @@ variable "resource_group_name" {
   description = "Resource group name to provision all resources"
 }
 
-variable "instance_name" {
-  description = "Instance name. Default is `microk8s-xxxxxxx`."
+variable "suffix" {
+  description = "Suffix of all resource names. Default is a 7-char random string."
 }
