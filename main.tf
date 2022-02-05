@@ -16,7 +16,7 @@ resource "azurerm_network_security_rule" "allow_control" {
   protocol                   = "TCP"
   access                     = "Allow"
   priority                   = 100
-  name                       = join("-", [module.naming.network_security_rule.name, "AllowControlFromIP"])
+  name                       = "AllowControlFromIP"
 }
 
 resource "azurerm_network_security_rule" "allow_https" {
@@ -31,28 +31,22 @@ resource "azurerm_network_security_rule" "allow_https" {
   protocol                   = "TCP"
   access                     = "Allow"
   priority                   = 110
-  name                       = join("-", [module.naming.network_security_rule.name, "AllowHTTPsFromInternet"])
+  name                       = "AllowHTTPsFromInternet"
 }
 
-# resource "azurerm_virtual_network" "main" {
-#   name                = "vnet-microk8s-nprd-01"
-#   resource_group_name = local.resource_group_name
-#   location            = local.location
+resource "azurerm_virtual_network" "main" {
+  name                = module.naming.virtual_network.name
+  resource_group_name = local.resource_group_name
+  location            = local.location
 
-#   address_space = ["172.16.0.0/16"]
-# }
+  address_space = ["172.16.0.0/16"]
 
-# resource "azurerm_subnet" "default" {
-#   name                 = "default"
-#   resource_group_name  = local.resource_group_name
-#   virtual_network_name = azurerm_virtual_network.main.name
-#   address_prefixes     = ["172.16.0.0/24"]
-# }
-
-# resource "azurerm_subnet_network_security_group_association" "default" {
-#   subnet_id                 = azurerm_subnet.default.id
-#   network_security_group_id = azurerm_network_security_group.default.id
-# }
+  subnet {
+    name           = join("-", [module.naming.subnet.name, "default"])
+    address_prefix = "172.16.0.0/24"
+    security_group = azurerm_network_security_group.default.id
+  }
+}
 
 # resource "azurerm_public_ip" "load_balancer" {
 #   name                = "pip-microk8s-nprd-01-lbe"
