@@ -48,19 +48,6 @@ resource "azurerm_virtual_network" "main" {
   }
 }
 
-# resource "azurerm_public_ip" "load_balancer" {
-#   name                = "pip-microk8s-nprd-01-lbe"
-#   resource_group_name = local.resource_group_name
-#   location            = local.location
-
-#   allocation_method = "Static"
-#   availability_zone = "No-Zone"
-#   domain_name_label = "fh7kxp6"
-#   sku               = "Standard"
-#   sku_tier          = "Regional"
-#   ip_version        = "IPv4"
-# }
-
 # resource "azurerm_network_interface" "vm_main" {
 #   name                = "vm-microk8s-nprd-660"
 #   resource_group_name = local.resource_group_name
