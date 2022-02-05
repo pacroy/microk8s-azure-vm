@@ -1,4 +1,8 @@
+data "azurerm_resource_group" "main" {
+  name = var.resource_group_name
+}
+
 locals {
-  resource_group_name = "rg-microk8s-nprd-01"
-  location            = "southeastasia"
+  resource_group_name = var.resource_group_name
+  location            = data.azurerm_resource_group.main.location
 }
