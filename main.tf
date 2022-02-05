@@ -80,3 +80,33 @@ resource "azurerm_network_interface" "vm_main" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+
+resource "azurerm_linux_virtual_machine" "main" {
+  name                = "vm-microk8s-nprd-01"
+  resource_group_name = upper(local.resource_group_name)
+  location            = local.location
+
+  size                  = "Standard_D2s_v5"
+  admin_username        = "azureuser"
+  network_interface_ids = [azurerm_network_interface.vm_main.id]
+
+  admin_ssh_key {
+    username   = "azureuser"
+    public_key = file("~/dev/pacroy/microk8s-nprd-01/ssh-microk8s-nprd-01.pub")
+  }
+
+  boot_diagnostics {}
+
+  os_disk {
+    name                 = "vm-microk8s-nprd-01_OsDisk_1_3489dc4012f34b6e9666cb338e688ce5"
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+  }
+
+  source_image_reference {
+    offer     = "0001-com-ubuntu-server-focal"
+    publisher = "canonical"
+    sku       = "20_04-lts-gen2"
+    version   = "latest"
+  }
+}
