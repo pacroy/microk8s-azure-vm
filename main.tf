@@ -123,15 +123,6 @@ resource "azurerm_lb" "main" {
     availability_zone    = "No-Zone"
     name                 = "pip-microk8s-nprd-01-lbe"
     public_ip_address_id = azurerm_public_ip.load_balancer.id
-    # load_balancer_rules = [
-    #   azurerm_lb_rule.ssh.id,
-    #   azurerm_lb_rule.kubectl.id,
-    #   azurerm_lb_rule.http.id,
-    #   azurerm_lb_rule.https.id,
-    # ]
-    # outbound_rules = [
-    #   azurerm_lb_outbound_rule.internet.id,
-    # ]
   }
 }
 
@@ -141,11 +132,14 @@ resource "azurerm_lb_backend_address_pool" "vm_main" {
 }
 
 resource "azurerm_lb_outbound_rule" "internet" {
-  resource_group_name     = local.resource_group_name
-  loadbalancer_id         = azurerm_lb.main.id
-  name                    = "rule-outbound"
-  protocol                = "Tcp"
-  backend_address_pool_id = azurerm_lb_backend_address_pool.vm_main.id
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "rule-outbound"
+
+  protocol                 = "All"
+  backend_address_pool_id  = azurerm_lb_backend_address_pool.vm_main.id
+  allocated_outbound_ports = 0
+  enable_tcp_reset         = true
 
   frontend_ip_configuration {
     name = azurerm_lb.main.frontend_ip_configuration[0].name
@@ -158,6 +152,7 @@ resource "azurerm_lb_probe" "vm_main" {
   name                = "ssh"
   protocol            = "Tcp"
   port                = 22
+  interval_in_seconds = 5
 }
 
 resource "azurerm_lb_rule" "ssh" {
@@ -170,6 +165,7 @@ resource "azurerm_lb_rule" "ssh" {
   backend_port                   = 22
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
 }
 
 resource "azurerm_lb_rule" "kubectl" {
@@ -182,6 +178,7 @@ resource "azurerm_lb_rule" "kubectl" {
   backend_port                   = 16443
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
 }
 
 resource "azurerm_lb_rule" "http" {
@@ -194,6 +191,7 @@ resource "azurerm_lb_rule" "http" {
   backend_port                   = 30219
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
 }
 
 resource "azurerm_lb_rule" "https" {
@@ -206,4 +204,5 @@ resource "azurerm_lb_rule" "https" {
   backend_port                   = 31498
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
 }
