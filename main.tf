@@ -113,7 +113,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 
 resource "azurerm_lb" "main" {
   name                = "lbe-microk8s-nprd-01"
-  resource_group_name = upper(local.resource_group_name)
+  resource_group_name = local.resource_group_name
   location            = local.location
 
   sku      = "Standard"
