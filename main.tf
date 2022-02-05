@@ -9,7 +9,7 @@ resource "azurerm_network_security_rule" "allow_control" {
   network_security_group_name = azurerm_network_security_group.default.name
 
   direction                  = "Inbound"
-  source_address_prefix      = "49.49.236.16"
+  source_address_prefix      = local.ip_address
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = ["22", "16443"]

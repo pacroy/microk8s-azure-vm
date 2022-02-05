@@ -11,3 +11,7 @@ variable "public_key" {
   description = "SSH public key. Can be generated with ssh-keygen -t rsa -b 4096 -f id_rsa -N \"\" -C \"microk8s\"."
   default     = ""
 }
+
+variable "ip_address" {
+  description = "IP address or range to allow access to the control ports of the VM."
+}
