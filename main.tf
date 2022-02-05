@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   boot_diagnostics {}
 
   os_disk {
-    name                 = join("-", [self.name, "osdisk"])
+    name                 = join("-", ["osdisk", module.naming.linux_virtual_machine.name])
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
