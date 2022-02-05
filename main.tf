@@ -39,13 +39,19 @@ resource "azurerm_virtual_network" "main" {
   resource_group_name = local.resource_group_name
   location            = local.location
 
-  address_space       = ["172.16.0.0/16"]
+  address_space = ["172.16.0.0/16"]
+}
 
-  subnet {
-    name           = "default"
-    address_prefix = "172.16.0.0/24"
-    security_group = azurerm_network_security_group.default.id
-  }
+resource "azurerm_subnet" "default" {
+  name                 = "default"
+  resource_group_name  = local.resource_group_name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["172.16.0.0/24"]
+}
+
+resource "azurerm_subnet_network_security_group_association" "default" {
+  subnet_id                 = azurerm_subnet.default.id
+  network_security_group_id = azurerm_network_security_group.default.id
 }
 
 resource "azurerm_public_ip" "load_balancer" {
@@ -53,10 +59,24 @@ resource "azurerm_public_ip" "load_balancer" {
   resource_group_name = local.resource_group_name
   location            = local.location
 
-  allocation_method   = "Static"
-  availability_zone   = "No-Zone"
-  domain_name_label   = "fh7kxp6"
-  sku                 = "Standard"
-  sku_tier            = "Regional"
-  ip_version          = "IPv4"
+  allocation_method = "Static"
+  availability_zone = "No-Zone"
+  domain_name_label = "fh7kxp6"
+  sku               = "Standard"
+  sku_tier          = "Regional"
+  ip_version        = "IPv4"
+}
+
+resource "azurerm_network_interface" "vm_main" {
+  name                = "vm-microk8s-nprd-660"
+  resource_group_name = local.resource_group_name
+  location            = local.location
+
+  enable_accelerated_networking = true
+
+  ip_configuration {
+    name                          = "ipconfig1"
+    subnet_id                     = azurerm_subnet.default.id
+    private_ip_address_allocation = "Dynamic"
+  }
 }
