@@ -1,5 +1,5 @@
 resource "azurerm_network_security_group" "default" {
-  name                = "nsg-microk8s-nprd-01-default"
+  name                = "${module.naming.network_security_group}-default"
   location            = local.location
   resource_group_name = local.resource_group_name
 }
@@ -16,7 +16,7 @@ resource "azurerm_network_security_rule" "allow_control" {
   protocol                   = "TCP"
   access                     = "Allow"
   priority                   = 100
-  name                       = "AllowControlFromIP"
+  name                       = "${module.naming.network_security_rule}-AllowControlFromIP"
 }
 
 resource "azurerm_network_security_rule" "allow_https" {
@@ -31,7 +31,7 @@ resource "azurerm_network_security_rule" "allow_https" {
   protocol                   = "TCP"
   access                     = "Allow"
   priority                   = 110
-  name                       = "AllowHTTPsFromInternet"
+  name                       = "${module.naming.network_security_rule}-AllowHTTPsFromInternet"
 }
 
 resource "azurerm_virtual_network" "main" {
