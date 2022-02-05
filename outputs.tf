@@ -1,5 +1,5 @@
 output "resource_group" {
-  value = azurerm_resource_group.main
+  value = data.azurerm_resource_group.main
 }
 
 output "suffix" {
