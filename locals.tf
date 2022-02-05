@@ -2,7 +2,7 @@ data "azurerm_resource_group" "main" {
   name = var.resource_group_name
 }
 
-resource "random_string" "char7" {
+resource "random_string" "id" {
   length  = 7
   special = false
   upper   = false
@@ -11,8 +11,8 @@ resource "random_string" "char7" {
 locals {
   resource_group_name = var.resource_group_name
   location            = data.azurerm_resource_group.main.location
-  random_char7        = random_string.char7.result
-  suffix              = coalesce(var.suffix, local.random_char7)
+  random_id           = random_string.id.result
+  suffix              = coalesce(var.suffix, local.random_id)
 }
 
 module "naming" {
