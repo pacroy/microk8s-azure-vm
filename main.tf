@@ -90,4 +90,6 @@ resource "azurerm_linux_virtual_machine" "main" {
     sku       = "20_04-lts-gen2"
     version   = "latest"
   }
+
+  custom_data = data.cloudinit_config.init.rendered
 }

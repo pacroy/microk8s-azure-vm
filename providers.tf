@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~>3.1.0"
     }
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = "2.2.0"
+    }
   }
   #   backend "azurerm" {}
 }
@@ -24,4 +28,7 @@ provider "random" {
 }
 
 provider "tls" {
+}
+
+provider "cloudinit" {
 }

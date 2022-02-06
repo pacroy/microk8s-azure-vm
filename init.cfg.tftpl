@@ -1,0 +1,9 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+runcmd:
+  - snap install microk8s --classic
+  - usermod -a -G microk8s "${admin_username}"
+  - microk8s status --wait-ready
+  - microk8s enable dns storage
+  - microk8s kubectl get nodes,services

@@ -14,6 +14,17 @@ resource "tls_private_key" "main" {
   rsa_bits  = "4096"
 }
 
+data "cloudinit_config" "init" {
+  gzip          = false
+  base64_encode = true
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = templatefile("${path.module}/init.cfg.tftpl", { admin_username = local.admin_username })
+  }
+}
+
 locals {
   resource_group_name = var.resource_group_name
   location            = data.azurerm_resource_group.main.location
