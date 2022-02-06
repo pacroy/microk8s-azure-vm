@@ -110,7 +110,7 @@ resource "azurerm_lb_outbound_rule" "main" {
 
   protocol                 = "All"
   backend_address_pool_id  = azurerm_lb_backend_address_pool.main.id
-  allocated_outbound_ports = 0
+  allocated_outbound_ports = 1024
   enable_tcp_reset         = true
 
   frontend_ip_configuration {
