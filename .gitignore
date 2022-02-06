@@ -42,3 +42,4 @@ terraform.rc
 .terraform.lock.hcl
 id_rsa*
 id_ed25591*
+admin.config
