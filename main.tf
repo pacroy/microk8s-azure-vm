@@ -43,7 +43,7 @@ resource "azurerm_virtual_network" "main" {
 
   subnet {
     name           = "default"
-    address_prefix = "172.16.0.0/24"
+    address_prefix = cidrsubnet(local.address_space, 8, 0)
     security_group = azurerm_network_security_group.default.id
   }
 }
