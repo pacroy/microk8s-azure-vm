@@ -10,6 +10,14 @@ output "domain_name_label" {
   value = local.domain_name_label
 }
 
+output "ssh_port" {
+  value = local.ssh_port
+}
+
+output "kubectl_port" {
+  value = local.kubectl_port
+}
+
 output "public_key" {
   value = local.public_key
 }

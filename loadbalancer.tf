@@ -38,78 +38,78 @@ resource "azurerm_lb_backend_address_pool_address" "main" {
   ip_address              = azurerm_linux_virtual_machine.main.private_ip_address
 }
 
-# resource "azurerm_lb_outbound_rule" "internet" {
-#   resource_group_name = local.resource_group_name
-#   loadbalancer_id     = azurerm_lb.main.id
-#   name                = "rule-outbound"
+resource "azurerm_lb_probe" "vm_main" {
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "ssh"
+  protocol            = "Tcp"
+  port                = 22
+  interval_in_seconds = 5
+}
 
-#   protocol                 = "All"
-#   backend_address_pool_id  = azurerm_lb_backend_address_pool.vm_main.id
-#   allocated_outbound_ports = 0
-#   enable_tcp_reset         = true
+resource "azurerm_lb_rule" "ssh" {
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "rule-ssh"
 
-#   frontend_ip_configuration {
-#     name = azurerm_lb.main.frontend_ip_configuration[0].name
-#   }
-# }
+  protocol                       = "Tcp"
+  frontend_port                  = local.ssh_port
+  backend_port                   = 22
+  frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
+}
 
-# resource "azurerm_lb_probe" "vm_main" {
-#   resource_group_name = local.resource_group_name
-#   loadbalancer_id     = azurerm_lb.main.id
-#   name                = "ssh"
-#   protocol            = "Tcp"
-#   port                = 22
-#   interval_in_seconds = 5
-# }
+resource "azurerm_lb_rule" "kubectl" {
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "rule-kubectl"
 
-# resource "azurerm_lb_rule" "ssh" {
-#   resource_group_name = local.resource_group_name
-#   loadbalancer_id     = azurerm_lb.main.id
-#   name                = "rule-ssh"
+  protocol                       = "Tcp"
+  frontend_port                  = local.kubectl_port
+  backend_port                   = 16443
+  frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
+}
 
-#   protocol                       = "Tcp"
-#   frontend_port                  = 21648
-#   backend_port                   = 22
-#   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
-#   probe_id                       = azurerm_lb_probe.vm_main.id
-#   disable_outbound_snat          = true
-# }
+resource "azurerm_lb_rule" "http" {
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "rule-http"
 
-# resource "azurerm_lb_rule" "kubectl" {
-#   resource_group_name = local.resource_group_name
-#   loadbalancer_id     = azurerm_lb.main.id
-#   name                = "rule-kubectl"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 30123
+  frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
+}
 
-#   protocol                       = "Tcp"
-#   frontend_port                  = 31659
-#   backend_port                   = 16443
-#   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
-#   probe_id                       = azurerm_lb_probe.vm_main.id
-#   disable_outbound_snat          = true
-# }
+resource "azurerm_lb_rule" "https" {
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "rule-https"
 
-# resource "azurerm_lb_rule" "http" {
-#   resource_group_name = local.resource_group_name
-#   loadbalancer_id     = azurerm_lb.main.id
-#   name                = "rule-http"
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 31456
+  frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  probe_id                       = azurerm_lb_probe.vm_main.id
+  disable_outbound_snat          = true
+}
 
-#   protocol                       = "Tcp"
-#   frontend_port                  = 80
-#   backend_port                   = 30219
-#   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
-#   probe_id                       = azurerm_lb_probe.vm_main.id
-#   disable_outbound_snat          = true
-# }
+resource "azurerm_lb_outbound_rule" "main" {
+  resource_group_name = local.resource_group_name
+  loadbalancer_id     = azurerm_lb.main.id
+  name                = "rule-outbound"
 
-# resource "azurerm_lb_rule" "https" {
-#   resource_group_name = local.resource_group_name
-#   loadbalancer_id     = azurerm_lb.main.id
-#   name                = "rule-https"
+  protocol                 = "All"
+  backend_address_pool_id  = azurerm_lb_backend_address_pool.vm_main.id
+  allocated_outbound_ports = 0
+  enable_tcp_reset         = true
 
-#   protocol                       = "Tcp"
-#   frontend_port                  = 443
-#   backend_port                   = 31498
-#   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
-#   probe_id                       = azurerm_lb_probe.vm_main.id
-#   disable_outbound_snat          = true
-# }
+  frontend_ip_configuration {
+    name = azurerm_lb.main.frontend_ip_configuration[0].name
+  }
+}
