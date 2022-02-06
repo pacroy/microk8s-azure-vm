@@ -18,6 +18,14 @@ output "kubectl_port" {
   value = local.kubectl_port
 }
 
+output "http_port" {
+  value = local.ssh_port
+}
+
+output "https_port" {
+  value = local.kubectl_port
+}
+
 output "public_key" {
   value = local.public_key
 }

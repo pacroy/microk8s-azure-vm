@@ -18,6 +18,16 @@ resource "random_integer" "kubectl" {
   max = 29999
 }
 
+resource "random_integer" "http" {
+  min = 30000
+  max = 34999
+}
+
+resource "random_integer" "https" {
+  min = 35000
+  max = 39999
+}
+
 resource "tls_private_key" "main" {
   count     = var.public_key != "" ? 0 : 1
   algorithm = "RSA"
@@ -46,6 +56,8 @@ locals {
   domain_name_label   = local.random_id
   ssh_port            = random_integer.ssh.result
   kubectl_port        = random_integer.kubectl.result
+  http_port           = random_integer.http.result
+  https_port          = random_integer.https.result
 }
 
 module "naming" {

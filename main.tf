@@ -27,7 +27,7 @@ resource "azurerm_network_security_rule" "allow_https" {
   source_address_prefix      = "Internet"
   source_port_range          = "*"
   destination_address_prefix = "*"
-  destination_port_ranges    = ["30123", "31456"]
+  destination_port_ranges    = [local.http_port, local.https_port]
   protocol                   = "TCP"
   access                     = "Allow"
   priority                   = 110

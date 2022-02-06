@@ -82,7 +82,7 @@ resource "azurerm_lb_rule" "http" {
 
   protocol                       = "Tcp"
   frontend_port                  = 80
-  backend_port                   = 30123
+  backend_port                   = local.http_port
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
@@ -96,7 +96,7 @@ resource "azurerm_lb_rule" "https" {
 
   protocol                       = "Tcp"
   frontend_port                  = 443
-  backend_port                   = 31456
+  backend_port                   = local.https_port
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
