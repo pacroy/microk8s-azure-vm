@@ -11,20 +11,20 @@ resource "azurerm_public_ip" "main" {
   ip_version        = "IPv4"
 }
 
-# resource "azurerm_lb" "main" {
-#   name                = "lbe-microk8s-nprd-01"
-#   resource_group_name = local.resource_group_name
-#   location            = local.location
+resource "azurerm_lb" "main" {
+  name                = module.naming.lb.name
+  resource_group_name = local.resource_group_name
+  location            = local.location
 
-#   sku      = "Standard"
-#   sku_tier = "Regional"
+  sku      = "Standard"
+  sku_tier = "Regional"
 
-#   frontend_ip_configuration {
-#     availability_zone    = "No-Zone"
-#     name                 = "pip-microk8s-nprd-01-lbe"
-#     public_ip_address_id = azurerm_public_ip.load_balancer.id
-#   }
-# }
+  frontend_ip_configuration {
+    availability_zone    = "No-Zone"
+    name                 = azurerm_public_ip.main.name
+    public_ip_address_id = azurerm_public_ip.main.id
+  }
+}
 
 # resource "azurerm_lb_backend_address_pool" "vm_main" {
 #   loadbalancer_id = azurerm_lb.main.id

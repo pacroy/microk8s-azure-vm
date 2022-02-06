@@ -31,3 +31,11 @@ output "linux_virtual_machine" {
   value     = azurerm_linux_virtual_machine.main
   sensitive = true
 }
+
+output "public_ip" {
+  value = azurerm_public_ip.main
+}
+
+output "lb" {
+  value = azurerm_lb.main
+}
