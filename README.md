@@ -35,7 +35,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 - [Terraform CLI](https://www.terraform.io/downloads)
 - An active Azure subscription, create a resource group you want to deploy to
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), [log in to Azure Cloud])(https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and [change to the subscription](https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli#change-the-active-subscription) you want to deploy to
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), [log in to Azure Cloud](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and [change to the subscription](https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli#change-the-active-subscription) you want to deploy to
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 - Clone this repository to your computer
 
