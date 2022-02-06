@@ -53,47 +53,4 @@ jobs:
           VALIDATE_ALL_CODEBASE: ${{ secrets.LINTER_VALIDATE_ALL_CODEBASE }}
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          ## ==================================================
-          ## Exclude/Include files
-          ## ==================================================
-          ## Uncomment this section to either exclude/include only files to scan
-          ## Reference: https://github.com/github/super-linter#environment-variables
-          ## ==================================================
-          # FILTER_REGEX_EXCLUDE: '(.*\.[mM][dD]|\.github/.*)'
-          # FILTER_REGEX_INCLUDE: '(.*\.[mM][dD]|\.github/.*)'
-          
-          ## ==================================================
-          ## Python
-          ## ==================================================
-          ## Uncomment this section to use only Pylint and disable all others
-          ## Reference: https://github.com/github/super-linter#environment-variables
-          ## ==================================================
-          # VALIDATE_PYTHON_BLACK: false
-          # VALIDATE_PYTHON_FLAKE8: false
-          # VALIDATE_PYTHON_ISORT: false
-          # VALIDATE_PYTHON_MYPY: false
-
-          ## ==================================================
-          ## OpenShift
-          ## ==================================================
-          ## Uncomment this section to disable YAML schema validation for OpenShift YAML files
-          ## Reference: https://github.com/github/super-linter#environment-variables
-          ## ==================================================
-          # VALIDATE_KUBERNETES_KUBEVAL: false
-
-          ## ==================================================
-          ## Shell script
-          ## ==================================================
-          ## Uncomment this section to exclude some rules globally
-          ## Reference: https://github.com/koalaman/shellcheck/wiki/Ignore
-          ## ==================================================
-          # SHELLCHECK_OPTS: "--exclude=SC2016,SC1004"
-
-          ## ==================================================
-          ## Natural Language
-          ## ==================================================
-          ## Uncomment this section to disable natural language validation (textlint)
-          ## Reference: https://github.com/github/super-linter#environment-variables
-          ## ==================================================
-          # VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_NATURAL_LANGUAGE: false

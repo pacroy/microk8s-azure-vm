@@ -1,45 +1,137 @@
-# Basic Template
+# Single Node MicroK8s on Azure VM
 
-[![Lint Code Base](https://github.com/pacroy/template-basic/actions/workflows/linter.yml/badge.svg)](https://github.com/pacroy/template-basic/actions/workflows/linter.yml) [![Check Markdown Links](https://github.com/pacroy/template-basic/actions/workflows/markdown-link-check.yml/badge.svg)](https://github.com/pacroy/template-basic/actions/workflows/markdown-link-check.yml)
+[![Lint Code Base](https://github.com/pacroy/microk8s-azure-vm/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/pacroy/microk8s-azure-vm/actions/workflows/linter.yml)
 
-## Features Included
+This [Terraform](https://www.terraform.io/) project deploys and configures a single node [MicroK8s](https://microk8s.io/) cluster on a virtual machine in Azure cloud. The cluster can run small workloads that are non-critical while minimizing cost.
 
-- GitHub Actions Workflows
-  - [linter.yml] - [Superlinter]
-  - [check-md-links.yml] - [Markdown Link Checker]
+## Components
+
+The following resources will be created:
+
+- A virtual network with one `default` subnet associated with a network security group that allow:
+  - Incoming SSH (port 22) and kubectl (port 16443) traffics from the specified IP address or range to the VM
+  - Incoming HTTP and HTTPs traffics from the Internet to randomized NodePorts of the nginx ingress controller
+- A Linux virtual machine (Ubuntu 20.04 LTS) deployed in the `default` subnet.
+- A public IP for the public load balancer.
+- A public load balancer that will route:
+  - Incoming SSH traffics from a ramdom port (20000-24999) to VM port 22.
+  - Incoming kubectl traffics from a ramdom port (25000-29999) to VM port 16443.
+  - Incoming HTTP traffics to a random port (30000-31999) on the VM.
+  - Incoming HTTPS traffics to a random port (32000-32767) on the VM.
+  - Outbound traffics from the VM to the Internet via the public IP
+
+The Linux virtual machine will also be initialized using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) configuration that perform the following:
+
+- Update and upgrade software packages
+- Install the latest Kubernetes version of MicroK8s
+- Enable dns, storage, and helm3 plugin services
+- Configure the cluster IP and DNS and generate KUBECONFIG file
+- Use [Helm](https://helm.sh/) to install:
+  - [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
+  - [cert-manager](https://cert-manager.io/docs/)
+  - [Let's Encrypt](https://letsencrypt.org/) Production ACME [cluster-issuer](https://github.com/pacroy/cluster-issuer-helm)
+- Configure unattended OS upgrades
+- Setup automatic weekly reboot on Sunday at 00:30 UTC
+
+## Prerequisites
+
+- [Terraform CLI](https://www.terraform.io/downloads)
+- An active Azure subscription, create a resource group you want to deploy to
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli), [log in to Azure Cloud](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) and [change to the subscription](https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli#change-the-active-subscription) you want to deploy to
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- Clone this repository to your computer
 
 ## Usage
 
-1. Click <kbd>Use this template</kbd> to [create a new repository from this template].
-2. Update [linter.yml] or remove if you don't need it.
+1. Initialize Terraform
 
-- [Create repository secret] `LINTER_VALIDATE_ALL_CODEBASE` and set to `true` if you want superlinter to always scan all codebase. Otherwise, set to `false` to scan only those changed.
-- Update or remove environment variables in `Lint Code Base` step as you wish. See comments for how to customize each of them.
+    ```sh
+    terraform init
+    ```
 
-3. Update the following [default linter's configurations] in [.github/linters] folder or remove them to always use the default configuration.
+2. Create a new workspace, if you want
 
-- Customize [.markdown-lint.yml] for Markdown linter. See [MarkdownLint Configuration] for more detail.
-- Customize [.hadolint.yaml] for dockerfile linter. See [Haskell Dockerfile Linter Configuration] for more detail.
-- Customize [.dockerfilelintrc] for dockerfile linter. See [DockerfileLint Configuration] for more detail.
-- Customize [.jscpd.json] for copy/paste detector check.
+    ```sh
+    terraform workspace new myk8s
+    ```
 
-4. Remove [markdown-link-check.yml] if you don't need it. Otherwise, update [mlc_config.json] to exclude some private URLs.
-5. Update [README.md] accordingly. Don't forget to update the status badges to point to your repository.
+3. Apply by giving the following variables:
 
-[Superlinter]: <https://github.com/github/super-linter>
-[linter.yml]: <.github/workflows/linter.yml>
-[create a new repository from this template]: <https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/creating-a-repository-from-a-template>
-[Create repository secret]: <https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository>
-[.markdown-lint.yml]: <.github/linters/.markdown-lint.yml>
-[.hadolint.yaml]: <.github/linters/.hadolint.yaml>
-[MarkdownLint Configuration]: <https://github.com/igorshubovych/markdownlint-cli#configuration>
-[.jscpd.json]: <.github/linters/.jscpd.json>
-[.github/linters]: <.github/linters>
-[.dockerfilelintrc]: <.github/linters/.dockerfilelintrc>
-[DockerfileLint Configuration]: <https://github.com/replicatedhq/dockerfilelint#configuring>
-[Haskell Dockerfile Linter Configuration]: <https://github.com/hadolint/hadolint#configure>
-[default linter's configurations]: <https://github.com/github/super-linter/tree/master/TEMPLATES>
-[Markdown Link Checker]: <https://github.com/tcort/markdown-link-check#config-file-format>
-[markdown-link-check.yml]: <.github/workflows/markdown-link-check.yml>
-[mlc_config.json]: <.github/markdown-link-check/mlc_config.json>
-[README.md]: <README.md>
+    - Resource group name.
+    - Suffix that will be use to name your resources, will be randomly generated if omit.
+    - Public ip address of your computer to securely allow only you to connect and control the VM/cluster.
+    - Email for Let's Encrypt notifications of certificate expirations
+
+    _See all available variables in [variables.tf](variables.tf)_
+
+    ```sh
+    terraform apply \
+        -var resource_group_name=rg-myk8s \
+        -var suffix=myk8s \
+        -var ip_address=$(curl -s ipv4.icanhazip.com) \
+        -var email=youremail@domain.com
+    ```
+
+    Enter `yes` to confirm to proceed.
+
+4. Once completed, create SSH key file as you need this to SSH into the VM.
+
+    ```sh
+    terraform output -raw private_key > id_rsa
+    chmod 600 id_rsa
+    ```
+
+5. SSH into the VM.
+
+    ```sh
+    ssh -i id_rsa -l azureuser -p $(terraform output ssh_port) $(terraform output -json public_ip | jq -r ".fqdn")
+    ```
+
+    Enter `yes` to confirm to connect.
+
+6. In SSH session, follow cloud-init logs.
+
+    ```sh
+    tail +1f /var/log/cloud-init-output.log
+    ```
+
+    Wait until it finishes when you see something like this:
+
+    ```console
+    Cloud-init v. 21.4-0ubuntu1~20.04.1 running 'modules:final' at Xxx, nn Mmm YYYY hh:mm:ss +0000. Up nn.dd seconds.
+    Cloud-init v. 21.4-0ubuntu1~20.04.1 finished at Xxx, nn Mmm YYYY hh:mm:ss +0000. Datasource DataSourceAzure [seed=/dev/sr0].  Up nnn.dd seconds
+    ```
+
+    Press <kbd>Ctrl + C</kbd> to exit from the log. Then press <kbd>Ctrl + D</kbd> to quit the SSH session.
+
+7. Download KUBECONFIG file.
+
+    ```sh
+    scp -i id_rsa -P $(terraform output ssh_port) azureuser@$(terraform output -json public_ip | jq -r ".fqdn"):admin.config admin.config
+    ```
+
+8. Note the FQDN and port of your VM.
+
+    ```sh
+    echo "FQDN: $(terraform output -json public_ip | jq -r ".fqdn")"
+    echo "Port: $(terraform output kubectl_port)"
+    ```
+
+9. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
+
+    ```yaml
+    apiVersion: v1
+    clusters:
+    - cluster:
+        certificate-authority-data: xxx==
+        server: https://xxxxxxx.southeastasia.cloudapp.azure.com:2xxxx
+    ```
+
+10. Test kubectl connection.
+
+    ```sh
+    export KUBECONFIG=admin.config
+    kubectl get nodes
+    ```
+
+    You should see the only node of your MicroK8s cluster and it is now ready for your use.
