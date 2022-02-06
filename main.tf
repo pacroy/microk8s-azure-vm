@@ -68,11 +68,11 @@ resource "azurerm_linux_virtual_machine" "main" {
   location            = local.location
 
   size                  = "Standard_D2s_v5"
-  admin_username        = "azureuser"
+  admin_username        = local.admin_username
   network_interface_ids = [azurerm_network_interface.main.id]
 
   admin_ssh_key {
-    username   = "azureuser"
+    username   = local.admin_username
     public_key = local.public_key
   }
 

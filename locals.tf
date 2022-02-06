@@ -21,6 +21,7 @@ locals {
   suffix              = coalesce(var.suffix, local.random_id)
   public_key          = var.public_key != "" ? var.public_key : tls_private_key.main[0].public_key_openssh
   ip_address          = var.ip_address
+  admin_username      = var.admin_username
 }
 
 module "naming" {

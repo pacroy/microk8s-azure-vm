@@ -15,3 +15,8 @@ variable "public_key" {
 variable "ip_address" {
   description = "IP address or range to allow access to the control ports of the VM. You may use `curl -s ipv4.icanhazip.com` to find your outbound public IP."
 }
+
+variable "admin_username" {
+  description = "Admin username of the porvisioning VM."
+  default     = "azureuser"
+}
