@@ -29,7 +29,6 @@ resource "random_integer" "https" {
 }
 
 resource "tls_private_key" "main" {
-  count     = var.public_key != "" ? 0 : 1
   algorithm = "RSA"
   rsa_bits  = "4096"
 }
@@ -50,7 +49,7 @@ locals {
   location            = data.azurerm_resource_group.main.location
   random_id           = random_string.id.result
   suffix              = coalesce(var.suffix, local.random_id)
-  public_key          = var.public_key != "" ? var.public_key : tls_private_key.main[0].public_key_openssh
+  public_key          = tls_private_key.main.public_key_openssh
   ip_address          = var.ip_address
   admin_username      = var.admin_username
   domain_name_label   = local.random_id
