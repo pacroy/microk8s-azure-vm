@@ -58,7 +58,7 @@ resource "azurerm_network_interface" "main" {
   ip_configuration {
     name                          = "ipconfig1"
     subnet_id                     = one(azurerm_virtual_network.main.subnet).id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = "Static"
   }
 }
 

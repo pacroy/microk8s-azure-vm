@@ -26,10 +26,17 @@ resource "azurerm_lb" "main" {
   }
 }
 
-# resource "azurerm_lb_backend_address_pool" "vm_main" {
-#   loadbalancer_id = azurerm_lb.main.id
-#   name            = "vm-microk8s-nprd-01"
-# }
+resource "azurerm_lb_backend_address_pool" "main" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = azurerm_linux_virtual_machine.main.name
+}
+
+resource "azurerm_lb_backend_address_pool_address" "main" {
+  name                    = azurerm_network_interface.main.ip_configuration[0].name
+  backend_address_pool_id = azurerm_lb_backend_address_pool.main.id
+  virtual_network_id      = azurerm_virtual_network.main.id
+  ip_address              = azurerm_linux_virtual_machine.main.private_ip_address
+}
 
 # resource "azurerm_lb_outbound_rule" "internet" {
 #   resource_group_name = local.resource_group_name
