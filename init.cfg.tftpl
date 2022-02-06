@@ -8,6 +8,7 @@ runcmd:
   - microk8s enable dns storage helm3
   - sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
   - |
+    echo "Generating KUBECONFIG file at /home/${admin_username}/admin.config ..."
     microk8s config > /home/${admin_username}/admin.config
     chown "${admin_username}" /home/${admin_username}/admin.config
     chmod 600 /home/${admin_username}/admin.config
@@ -24,6 +25,7 @@ runcmd:
     microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
     microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
   - |
+    echo "Configuring unattended upgrades ..."
     sed -i "s/\/\/Unattended-Upgrade::Remove-Unused-Dependencies \"false\";/Unattended-Upgrade::Remove-Unused-Dependencies \"true\";/" /etc/apt/apt.conf.d/50unattended-upgrades
     sed -i "s/\/\/Unattended-Upgrade::Automatic-Reboot \"false\";/Unattended-Upgrade::Automatic-Reboot \"true\";/" /etc/apt/apt.conf.d/50unattended-upgrades
     sed -i "s/\/\/Unattended-Upgrade::Automatic-Reboot-Time \"02:00\";/Unattended-Upgrade::Automatic-Reboot-Time \"00:20\";/" /etc/apt/apt.conf.d/50unattended-upgrades
