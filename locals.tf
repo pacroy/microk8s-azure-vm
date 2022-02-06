@@ -40,7 +40,11 @@ data "cloudinit_config" "init" {
   part {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/init.cfg.tftpl", { admin_username = local.admin_username })
+    content = templatefile("${path.module}/init.cfg.tftpl", {
+      admin_username = local.admin_username
+      fqdn           = azurerm_public_ip.main.fqdn
+      public_ip      = azurerm_public_ip.main.ip_address
+    })
   }
 }
 
