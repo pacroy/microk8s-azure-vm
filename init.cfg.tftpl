@@ -31,4 +31,4 @@ runcmd:
     sed -i "s/\/\/Unattended-Upgrade::Automatic-Reboot-Time \"02:00\";/Unattended-Upgrade::Automatic-Reboot-Time \"00:20\";/" /etc/apt/apt.conf.d/50unattended-upgrades
   - |
     echo "Setting up automatic weekly reboot ..."
-    echo "30 0 * * 0  root  test \"$(date -I)\" != \"$(uptime -s | awk -F' ' '{print $1}')\" && shutdown -r +1" > /etc/cron.d/reboot
+    echo "30 0 * * 0  root  test \"\$(date -I)\" != \"\$(uptime -s | awk -F' ' '{print $1}')\" && shutdown -r +1" > /etc/cron.d/reboot
