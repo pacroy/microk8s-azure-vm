@@ -105,7 +105,7 @@ resource "azurerm_lb_outbound_rule" "main" {
   name                = "rule-outbound"
 
   protocol                 = "All"
-  backend_address_pool_id  = azurerm_lb_backend_address_pool.vm_main.id
+  backend_address_pool_id  = azurerm_lb_backend_address_pool.main.id
   allocated_outbound_ports = 0
   enable_tcp_reset         = true
 
