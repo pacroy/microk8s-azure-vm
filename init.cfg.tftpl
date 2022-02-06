@@ -22,4 +22,4 @@ runcmd:
       --set "controller.service.nodePorts.http=${http_port}" \
       --set "controller.service.nodePorts.https=${https_port}"
     microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
-    microk8s helm3 install cluster-issuer pacroy/cluster-issuer -n cert-manager --set "email=${email}"
+    microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
