@@ -5,8 +5,20 @@ runcmd:
   - snap install microk8s --classic
   - usermod -a -G microk8s "${admin_username}"
   - microk8s status --wait-ready
-  - microk8s enable dns storage
+  - microk8s enable dns storage helm3
   - sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
-  - microk8s config > /home/${admin_username}/admin.config
-  - chown "${admin_username}" /home/${admin_username}/admin.config
-  - chmod 600 /home/${admin_username}/admin.config
+  - |
+    microk8s config > /home/${admin_username}/admin.config
+    chown "${admin_username}" /home/${admin_username}/admin.config
+    chmod 600 /home/${admin_username}/admin.config
+  - |
+    microk8s helm3 repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    microk8s helm3 repo add jetstack https://charts.jetstack.io
+    microk8s helm3 repo add pacroy https://pacroy.github.io/helm-repo
+    microk8s helm3 repo update
+    microk8s helm3 install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace \
+      --set "controller.service.type=NodePort" \
+      --set "controller.service.nodePorts.http=${http_port}" \
+      --set "controller.service.nodePorts.https=${https_port}"
+    microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
+    microk8s helm3 install cluster-issuer pacroy/cluster-issuer -n cert-manager --set "email=${email}"

@@ -44,6 +44,9 @@ data "cloudinit_config" "init" {
       admin_username = local.admin_username
       fqdn           = azurerm_public_ip.main.fqdn
       public_ip      = azurerm_public_ip.main.ip_address
+      http_port      = local.http_port
+      https_port     = local.https_port
+      email          = local.email
     })
   }
 }
@@ -63,6 +66,7 @@ locals {
   https_port          = random_integer.https.result
   address_space       = var.address_space
   size                = var.size
+  email               = var.email
 }
 
 module "naming" {
