@@ -56,6 +56,7 @@ resource "azurerm_lb_rule" "ssh" {
   frontend_port                  = local.ssh_port
   backend_port                   = 22
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
   disable_outbound_snat          = true
 }
@@ -69,6 +70,7 @@ resource "azurerm_lb_rule" "kubectl" {
   frontend_port                  = local.kubectl_port
   backend_port                   = 16443
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
   disable_outbound_snat          = true
 }
@@ -82,6 +84,7 @@ resource "azurerm_lb_rule" "http" {
   frontend_port                  = 80
   backend_port                   = 30123
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
   disable_outbound_snat          = true
 }
@@ -95,6 +98,7 @@ resource "azurerm_lb_rule" "https" {
   frontend_port                  = 443
   backend_port                   = 31456
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
   disable_outbound_snat          = true
 }
