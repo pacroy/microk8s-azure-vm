@@ -22,3 +22,7 @@ output "network_security_group" {
 output "virtual_network" {
   value = azurerm_virtual_network.main
 }
+
+output "linux_virtual_machine" {
+  value = azurerm_linux_virtual_machine.main
+}
