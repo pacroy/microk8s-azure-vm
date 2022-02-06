@@ -59,6 +59,7 @@ resource "azurerm_network_interface" "main" {
     name                          = "ipconfig1"
     subnet_id                     = one(azurerm_virtual_network.main.subnet).id
     private_ip_address_allocation = "Static"
+    private_ip_address            = cidrhost(cidrsubnet(one(azurerm_virtual_network.main.subnet).address_prefix, 8, 0), 4)
   }
 }
 
