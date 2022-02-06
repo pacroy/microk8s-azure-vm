@@ -16,7 +16,7 @@ runcmd:
     microk8s helm3 repo add jetstack https://charts.jetstack.io
     microk8s helm3 repo add pacroy https://pacroy.github.io/helm-repo
     microk8s helm3 repo update
-    microk8s status --wait-ready
+    sleep 10
     microk8s helm3 install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace \
       --set "controller.service.type=NodePort" \
       --set "controller.service.nodePorts.http=${http_port}" \
