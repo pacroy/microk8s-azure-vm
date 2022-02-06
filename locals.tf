@@ -57,6 +57,7 @@ locals {
   kubectl_port        = random_integer.kubectl.result
   http_port           = random_integer.http.result
   https_port          = random_integer.https.result
+  address_space       = var.address_space
 }
 
 module "naming" {

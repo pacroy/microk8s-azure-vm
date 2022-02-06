@@ -15,3 +15,8 @@ variable "admin_username" {
   description = "Admin username of the porvisioning VM."
   default     = "azureuser"
 }
+
+variable "address_space" {
+  description = "Virtual netowrk address space in CIDR range."
+  default     = "172.16.0.0/16"
+}

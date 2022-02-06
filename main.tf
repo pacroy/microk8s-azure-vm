@@ -39,7 +39,7 @@ resource "azurerm_virtual_network" "main" {
   resource_group_name = local.resource_group_name
   location            = local.location
 
-  address_space = ["172.16.0.0/16"]
+  address_space = [local.address_space]
 
   subnet {
     name           = "default"
