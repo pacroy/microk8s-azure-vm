@@ -20,12 +20,12 @@ resource "random_integer" "kubectl" {
 
 resource "random_integer" "http" {
   min = 30000
-  max = 34999
+  max = 31999
 }
 
 resource "random_integer" "https" {
-  min = 35000
-  max = 39999
+  min = 32000
+  max = 32767
 }
 
 resource "tls_private_key" "main" {
