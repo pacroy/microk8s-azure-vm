@@ -67,7 +67,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   resource_group_name = local.resource_group_name
   location            = local.location
 
-  size                  = "Standard_D2s_v5"
+  size                  = local.size
   admin_username        = local.admin_username
   network_interface_ids = [azurerm_network_interface.main.id]
 

@@ -58,6 +58,7 @@ locals {
   http_port           = random_integer.http.result
   https_port          = random_integer.https.result
   address_space       = var.address_space
+  size                = var.size
 }
 
 module "naming" {

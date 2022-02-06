@@ -20,3 +20,8 @@ variable "address_space" {
   description = "Virtual netowrk address space in CIDR range."
   default     = "172.16.0.0/16"
 }
+
+variable "size" {
+  description = "Virtual machine size."
+  default     = "Standard_D2s_v5"
+}
