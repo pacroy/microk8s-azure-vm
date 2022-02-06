@@ -19,11 +19,11 @@ output "kubectl_port" {
 }
 
 output "http_port" {
-  value = local.ssh_port
+  value = local.http_port
 }
 
 output "https_port" {
-  value = local.kubectl_port
+  value = local.https_port
 }
 
 output "public_key" {
