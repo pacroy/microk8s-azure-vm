@@ -1,5 +1,7 @@
 # Single Node MicroK8s on Azure VM
 
+[![Lint Code Base](https://github.com/pacroy/microk8s-azure-vm/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/pacroy/microk8s-azure-vm/actions/workflows/linter.yml)
+
 This [Terraform](https://www.terraform.io/) project deploys and configures a single node [MicroK8s](https://microk8s.io/) cluster on a virtual machine in Azure cloud. The cluster can run small workloads that are non-critical while minimizing cost.
 
 ## Components
