@@ -33,6 +33,7 @@ locals {
   public_key          = var.public_key != "" ? var.public_key : tls_private_key.main[0].public_key_openssh
   ip_address          = var.ip_address
   admin_username      = var.admin_username
+  domain_name_label   = local.random_id
 }
 
 module "naming" {

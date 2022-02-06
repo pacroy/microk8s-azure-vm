@@ -6,6 +6,10 @@ output "suffix" {
   value = local.suffix
 }
 
+output "domain_name_label" {
+  value = local.domain_name_label
+}
+
 output "public_key" {
   value = local.public_key
 }

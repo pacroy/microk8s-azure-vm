@@ -1,15 +1,15 @@
-# resource "azurerm_public_ip" "load_balancer" {
-#   name                = "pip-microk8s-nprd-01-lbe"
-#   resource_group_name = local.resource_group_name
-#   location            = local.location
+resource "azurerm_public_ip" "main" {
+  name                = module.naming.public_ip.name
+  resource_group_name = local.resource_group_name
+  location            = local.location
 
-#   allocation_method = "Static"
-#   availability_zone = "No-Zone"
-#   domain_name_label = "fh7kxp6"
-#   sku               = "Standard"
-#   sku_tier          = "Regional"
-#   ip_version        = "IPv4"
-# }
+  allocation_method = "Static"
+  availability_zone = "No-Zone"
+  domain_name_label = local.domain_name_label
+  sku               = "Standard"
+  sku_tier          = "Regional"
+  ip_version        = "IPv4"
+}
 
 # resource "azurerm_lb" "main" {
 #   name                = "lbe-microk8s-nprd-01"
