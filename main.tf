@@ -34,6 +34,22 @@ resource "azurerm_network_security_rule" "allow_https" {
   name                       = "AllowHTTPsFromInternet"
 }
 
+resource "azurerm_network_security_rule" "allow_azurecloud" {
+  count                       = var.allow_kubectl_from_azurecloud ? 1 : 0
+  resource_group_name         = local.resource_group_name
+  network_security_group_name = azurerm_network_security_group.default.name
+
+  direction                  = "Inbound"
+  source_address_prefix      = "AzureCloud"
+  source_port_range          = "*"
+  destination_address_prefix = "*"
+  destination_port_ranges    = ["16443"]
+  protocol                   = "TCP"
+  access                     = "Allow"
+  priority                   = 120
+  name                       = "AllowControlFromAzureCloud"
+}
+
 resource "azurerm_virtual_network" "main" {
   name                = module.naming.virtual_network.name
   resource_group_name = local.resource_group_name

@@ -29,3 +29,8 @@ variable "size" {
   description = "Virtual machine size."
   default     = "Standard_D2s_v5"
 }
+
+variable "allow_kubectl_from_azurecloud" {
+  description = "Whether to add an inbound rule to allow kubectl from AzureCloud when connecting from GitHub Actions or Azure Pipelines."
+  default     = false
+}
