@@ -46,7 +46,7 @@ resource "azurerm_network_security_rule" "allow_azurecloud" {
   destination_port_ranges    = ["16443"]
   protocol                   = "TCP"
   access                     = "Allow"
-  priority                   = 100
+  priority                   = 120
   name                       = "AllowControlFromAzureCloud"
 }
 
