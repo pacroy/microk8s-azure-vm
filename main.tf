@@ -40,8 +40,8 @@ resource "azurerm_network_security_rule" "allow_azurecloud" {
   network_security_group_name = azurerm_network_security_group.default.name
 
   direction                  = "Inbound"
-  source_address_prefix      = local.ip_address
-  source_port_range          = "AzureCloud"
+  source_address_prefix      = "AzureCloud"
+  source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = ["16443"]
   protocol                   = "TCP"
