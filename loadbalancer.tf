@@ -20,7 +20,6 @@ resource "azurerm_lb" "main" {
   sku_tier = "Regional"
 
   frontend_ip_configuration {
-    availability_zone    = "No-Zone"
     name                 = azurerm_public_ip.main.name
     public_ip_address_id = azurerm_public_ip.main.id
   }

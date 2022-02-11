@@ -43,3 +43,4 @@ terraform.rc
 id_rsa*
 id_ed25591*
 admin.config
+.DS_Store

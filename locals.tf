@@ -2,8 +2,15 @@ data "azurerm_resource_group" "main" {
   name = var.resource_group_name
 }
 
-resource "random_string" "id" {
-  length  = 7
+resource "random_string" "first_character" {
+  length  = 1
+  special = false
+  upper   = false
+  number  = false
+}
+
+resource "random_string" "six_character" {
+  length  = 6
   special = false
   upper   = false
 }
@@ -54,7 +61,7 @@ data "cloudinit_config" "init" {
 locals {
   resource_group_name = var.resource_group_name
   location            = data.azurerm_resource_group.main.location
-  random_id           = random_string.id.result
+  random_id           = "${random_string.first_character.result}${random_string.six_character.result}"
   suffix              = coalesce(var.suffix, local.random_id)
   public_key          = tls_private_key.main.public_key_openssh
   ip_address          = var.ip_address
