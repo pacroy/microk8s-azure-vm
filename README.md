@@ -85,7 +85,9 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 5. SSH into the VM.
 
     ```sh
-    ssh -i id_rsa -l azureuser -p $(terraform output ssh_port) $(terraform output -json public_ip | jq -r ".fqdn")
+    SSH_PORT="$(terraform output ssh_port)"
+    VM_FQDN="$(terraform output -json public_ip | jq -r ".fqdn")"
+    ssh -i id_rsa -l azureuser -p $SSH_PORT $VM_FQDN
     ```
 
     Enter `yes` to confirm to connect.
