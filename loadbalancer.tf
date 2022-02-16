@@ -42,7 +42,7 @@ resource "azurerm_lb_probe" "vm_main" {
   loadbalancer_id     = azurerm_lb.main.id
   name                = "ssh"
   protocol            = "Tcp"
-  port                = 22
+  port                = local.ssh_vm_port
   interval_in_seconds = 5
 }
 
@@ -53,7 +53,7 @@ resource "azurerm_lb_rule" "ssh" {
 
   protocol                       = "Tcp"
   frontend_port                  = local.ssh_port
-  backend_port                   = 22
+  backend_port                   = local.ssh_vm_port
   frontend_ip_configuration_name = azurerm_lb.main.frontend_ip_configuration[0].name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.main.id]
   probe_id                       = azurerm_lb_probe.vm_main.id
