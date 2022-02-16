@@ -59,6 +59,7 @@ data "cloudinit_config" "init" {
       http_port      = local.http_port
       https_port     = local.https_port
       email          = local.email
+      ssh_vm_port    = local.ssh_vm_port
     })
   }
 }
