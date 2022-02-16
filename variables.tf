@@ -32,5 +32,5 @@ variable "size" {
 
 variable "allow_kubectl_from_azurecloud" {
   description = "Whether to add an inbound rule to allow kubectl from AzureCloud when connecting from GitHub Actions or Azure Pipelines."
-  default     = false
+  default     = true
 }
