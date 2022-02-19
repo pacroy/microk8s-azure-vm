@@ -4,7 +4,7 @@ package_upgrade: true
 runcmd:
   - |
     sed -i "s/#Port 22/Port ${ssh_vm_port}/" /etc/ssh/sshd_config
-    /etc/init.d/sshd restart
+    systemctl restart sshd
   - snap install microk8s --classic
   - usermod -a -G microk8s "${admin_username}"
   - |
