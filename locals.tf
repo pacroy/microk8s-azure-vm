@@ -20,6 +20,11 @@ resource "random_integer" "ssh" {
   max = 24999
 }
 
+resource "random_integer" "ssh_vm" {
+  min = 10001
+  max = 16442
+}
+
 resource "random_integer" "kubectl" {
   min = 25000
   max = 29999
@@ -54,6 +59,7 @@ data "cloudinit_config" "init" {
       http_port      = local.http_port
       https_port     = local.https_port
       email          = local.email
+      ssh_vm_port    = local.ssh_vm_port
     })
   }
 }
@@ -74,6 +80,7 @@ locals {
   address_space       = var.address_space
   size                = var.size
   email               = var.email
+  ssh_vm_port         = random_integer.ssh_vm.result
 }
 
 module "naming" {

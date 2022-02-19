@@ -2,27 +2,39 @@
 package_update: true
 package_upgrade: true
 runcmd:
-  - snap install microk8s --classic
-  - usermod -a -G microk8s "${admin_username}"
-  - microk8s status --wait-ready
-  - microk8s enable dns storage helm3
-  - sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
+  - |
+    echo "Configuring SSH port ${ssh_vm_port} ..."
+    sed -i "s/#Port 22/Port ${ssh_vm_port}/" /etc/ssh/sshd_config
+    systemctl restart sshd
+  - |
+    echo "Installing MicroK8s for ${admin_username} ..."
+    snap install microk8s --classic
+    usermod -a -G microk8s "${admin_username}"
+  - |
+    echo "Configuring MicroK8s at ${fqdn} (${public_ip}) ..."
+    microk8s status --wait-ready
+    microk8s enable dns storage helm3
+    sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
   - |
     echo "Generating KUBECONFIG file at /home/${admin_username}/admin.config ..."
     microk8s config > /home/${admin_username}/admin.config
     chown "${admin_username}" /home/${admin_username}/admin.config
     chmod 600 /home/${admin_username}/admin.config
   - |
+    echo "Configuring helm3 ..."
     microk8s helm3 repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
     microk8s helm3 repo add jetstack https://charts.jetstack.io
     microk8s helm3 repo add pacroy https://pacroy.github.io/helm-repo
     microk8s helm3 repo update
     sleep 10
+    echo "Install ingress-nginx at port ${http_port}/${https_port} ..."
     microk8s helm3 install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace \
       --set "controller.service.type=NodePort" \
       --set "controller.service.nodePorts.http=${http_port}" \
       --set "controller.service.nodePorts.https=${https_port}"
+    echo "Installing cert-manager ..."
     microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
+    echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
     microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
   - |
     echo "Configuring unattended upgrades ..."

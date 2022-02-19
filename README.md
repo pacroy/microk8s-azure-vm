@@ -14,7 +14,7 @@ The following resources will be created:
 - A Linux virtual machine (Ubuntu 20.04 LTS) deployed in the `default` subnet.
 - A public IP for the public load balancer.
 - A public load balancer that will route:
-  - Incoming SSH traffics from a ramdom port (20000-24999) to VM port 22.
+  - Incoming SSH traffics from a ramdom port (20000-24999) to VM random SSH port (10001-16442).
   - Incoming kubectl traffics from a ramdom port (25000-29999) to VM port 16443.
   - Incoming HTTP traffics to a random port (30000-31999) on the VM.
   - Incoming HTTPS traffics to a random port (32000-32767) on the VM.
@@ -23,6 +23,7 @@ The following resources will be created:
 The Linux virtual machine will also be initialized using [cloud-init](https://cloudinit.readthedocs.io/en/latest/) configuration that perform the following:
 
 - Update and upgrade software packages
+- Change SSH port
 - Install the latest Kubernetes version of MicroK8s
 - Enable dns, storage, and helm3 plugin services
 - Configure the cluster IP and DNS and generate KUBECONFIG file
@@ -81,10 +82,12 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     chmod 600 id_rsa
     ```
 
-5. SSH into the VM.
+5. SSH into the VM. Note: You might need to wait a bit before you can connect.
 
     ```sh
-    ssh -i id_rsa -l azureuser -p $(terraform output ssh_port) $(terraform output -json public_ip | jq -r ".fqdn")
+    SSH_PORT="$(terraform output ssh_port)"
+    VM_FQDN="$(terraform output -json public_ip | jq -r ".fqdn")"
+    ssh -i id_rsa -l azureuser -p $SSH_PORT $VM_FQDN
     ```
 
     Enter `yes` to confirm to connect.
