@@ -3,14 +3,18 @@ package_update: true
 package_upgrade: true
 runcmd:
   - |
+    echo "Configuring SSH port ${ssh_vm_port} ..."
     sed -i "s/#Port 22/Port ${ssh_vm_port}/" /etc/ssh/sshd_config
     systemctl restart sshd
-  - snap install microk8s --classic
-  - usermod -a -G microk8s "${admin_username}"
   - |
+    echo "Installing MicroK8s for ${admin_username} ..."
+    snap install microk8s --classic
+    usermod -a -G microk8s "${admin_username}"
+  - |
+    echo "Configuring MicroK8s at ${fqdn} (${public_ip}) ..."
     microk8s status --wait-ready
     microk8s enable dns storage helm3
-  - sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
+    sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
   - |
     echo "Generating KUBECONFIG file at /home/${admin_username}/admin.config ..."
     microk8s config > /home/${admin_username}/admin.config
