@@ -82,7 +82,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     chmod 600 id_rsa
     ```
 
-5. SSH into the VM.
+5. SSH into the VM. Note: You might need to wait a bit before you can connect.
 
     ```sh
     SSH_PORT="$(terraform output ssh_port)"
