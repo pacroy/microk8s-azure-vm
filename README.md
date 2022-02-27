@@ -131,7 +131,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
         server: https://xxxxxxx.southeastasia.cloudapp.azure.com:2xxxx
     ```
 
-10.  Test kubectl connection.
+10. Test kubectl connection.
 
     ```sh
     export KUBECONFIG=admin.config
@@ -139,3 +139,9 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     ```
 
     You should see the only node of your MicroK8s cluster and it is now ready for your use.
+
+11. You can see your server ingress public IP address using this command:
+
+    ```sh
+    echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
+    ```
