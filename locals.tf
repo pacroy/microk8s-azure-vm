@@ -66,7 +66,7 @@ data "cloudinit_config" "init" {
 
 locals {
   resource_group_name = var.resource_group_name
-  location            = data.azurerm_resource_group.main.location
+  location            = coalesce(var.location, data.azurerm_resource_group.main.location)
   random_id           = "${random_string.first_character.result}${random_string.six_character.result}"
   suffix              = coalesce(var.suffix, local.random_id)
   public_key          = tls_private_key.main.public_key_openssh
