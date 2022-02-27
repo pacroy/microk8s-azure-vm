@@ -121,7 +121,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     echo "server: $(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
     ```
 
-1. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
+9. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
 
     ```yaml
     apiVersion: v1
@@ -131,7 +131,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
         server: https://xxxxxxx.southeastasia.cloudapp.azure.com:2xxxx
     ```
 
-2.  Test kubectl connection.
+10.  Test kubectl connection.
 
     ```sh
     export KUBECONFIG=admin.config
