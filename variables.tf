@@ -6,6 +6,11 @@ variable "ip_address" {
   description = "IP address or range to allow access to the control ports of the VM. You may use `curl -s ipv4.icanhazip.com` to find your outbound public IP."
 }
 
+variable "location" {
+  description = "The location to provision all resources. Omit to use the same location as the resource group."
+  default     = ""
+}
+
 variable "email" {
   description = "Email address for receiving notifications from Let's Encrypt."
 }

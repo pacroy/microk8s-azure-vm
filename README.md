@@ -87,6 +87,8 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     ```sh
     SSH_PORT="$(terraform output ssh_port)"
     VM_FQDN="$(terraform output -json public_ip | jq -r ".fqdn")"
+    echo "SSH_PORT: $SSH_PORT"
+    echo "VM_FQDN : $VM_FQDN"
     ssh -i id_rsa -l azureuser -p $SSH_PORT $VM_FQDN
     ```
 
@@ -116,8 +118,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 8. Note the FQDN and port of your VM.
 
     ```sh
-    echo "FQDN: $(terraform output -json public_ip | jq -r ".fqdn")"
-    echo "Port: $(terraform output kubectl_port)"
+    echo "server: $(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
     ```
 
 9. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
@@ -138,3 +139,9 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     ```
 
     You should see the only node of your MicroK8s cluster and it is now ready for your use.
+
+11. You can see your server ingress public IP address using this command:
+
+    ```sh
+    echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
+    ```
