@@ -71,6 +71,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
         -var suffix=myk8s \
         -var email=youremail@domain.com
     ```
+
     _You can add `-var enable_cert_manager=false` if you don't want to install cert-manager and Let's Encrypt clusterr-issuer._
 
     Enter `yes` to confirm to proceed.
