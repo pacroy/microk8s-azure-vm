@@ -2,7 +2,7 @@
 
 [![Lint Code Base](https://github.com/pacroy/microk8s-azure-vm/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/pacroy/microk8s-azure-vm/actions/workflows/linter.yml)
 
-This [Terraform](https://www.terraform.io/) project deploys and configures a single node [MicroK8s](https://microk8s.io/) cluster on a virtual machine in Azure cloud. The cluster can run small workloads that are non-critical while minimizing cost.
+This [Terraform](https://www.terraform.io/) project deploys and configures a single node [MicroK8s](https://microk8s.io/) cluster on single virtual machine in Azure cloud. The cluster can run small workloads that are non-critical while minimizing cost.
 
 ## Components
 
@@ -69,9 +69,9 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     terraform apply \
         -var resource_group_name=rg-myk8s \
         -var suffix=myk8s \
-        -var ip_address=$(curl -s ipv4.icanhazip.com) \
         -var email=youremail@domain.com
     ```
+    _You can add `-var enable_cert_manager=false` if you don't want to install cert-manager and Let's Encrypt clusterr-issuer._
 
     Enter `yes` to confirm to proceed.
 
