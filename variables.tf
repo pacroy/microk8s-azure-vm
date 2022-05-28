@@ -3,6 +3,12 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "ip_address" {
+  description = "IP address or range to allow access to the control ports of the VM. Default value is your public IP address."
+  type        = string
+  default     = ""
+}
+
 variable "location" {
   description = "The location to provision all resources. Omit to use the same location as the resource group."
   type        = string
