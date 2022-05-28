@@ -65,13 +65,17 @@ data "cloudinit_config" "init" {
   }
 }
 
+data "http" "ip_address" {
+  url = "http://ipv4.icanhazip.com"
+}
+
 locals {
   resource_group_name = var.resource_group_name
   location            = coalesce(var.location, data.azurerm_resource_group.main.location)
   random_id           = "${random_string.first_character.result}${random_string.six_character.result}"
   suffix              = coalesce(var.suffix, local.random_id)
   public_key          = tls_private_key.main.public_key_openssh
-  ip_address          = var.ip_address
+  ip_address          = chomp(data.http.ip_address.body)
   admin_username      = var.admin_username
   domain_name_label   = local.random_id
   ssh_port            = random_integer.ssh.result
