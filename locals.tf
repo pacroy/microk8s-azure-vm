@@ -53,13 +53,14 @@ data "cloudinit_config" "init" {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/init.cfg.tftpl", {
-      admin_username = local.admin_username
-      fqdn           = azurerm_public_ip.main.fqdn
-      public_ip      = azurerm_public_ip.main.ip_address
-      http_port      = local.http_port
-      https_port     = local.https_port
-      email          = local.email
-      ssh_vm_port    = local.ssh_vm_port
+      admin_username      = local.admin_username
+      fqdn                = azurerm_public_ip.main.fqdn
+      public_ip           = azurerm_public_ip.main.ip_address
+      http_port           = local.http_port
+      https_port          = local.https_port
+      email               = local.email
+      ssh_vm_port         = local.ssh_vm_port
+      enable_cert_manager = local.enable_cert_manager
     })
   }
 }
@@ -81,6 +82,7 @@ locals {
   size                = var.size
   email               = var.email
   ssh_vm_port         = random_integer.ssh_vm.result
+  enable_cert_manager = var.enable_cert_manager
 }
 
 module "naming" {
