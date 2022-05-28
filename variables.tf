@@ -39,3 +39,9 @@ variable "allow_kubectl_from_azurecloud" {
   description = "Whether to add an inbound rule to allow kubectl from AzureCloud when connecting from GitHub Actions or Azure Pipelines."
   default     = true
 }
+
+variable "enable_cert_manager" {
+  description = "Whether to install cert-manager and Let's Encrypt cluster issuer."
+  type = bool
+  default     = true
+}
