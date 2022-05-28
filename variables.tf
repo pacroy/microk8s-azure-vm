@@ -13,6 +13,7 @@ variable "email" {
   description = "Email address for receiving notifications from Let's Encrypt."
   type        = string
   default     = "f136054@mailinator.com"
+}
 
 variable "suffix" {
   description = "Suffix of all resource names. Default is a 7-char random string."
