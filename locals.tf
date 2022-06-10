@@ -53,15 +53,20 @@ data "cloudinit_config" "init" {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/init.cfg.tftpl", {
-      admin_username = local.admin_username
-      fqdn           = azurerm_public_ip.main.fqdn
-      public_ip      = azurerm_public_ip.main.ip_address
-      http_port      = local.http_port
-      https_port     = local.https_port
-      email          = local.email
-      ssh_vm_port    = local.ssh_vm_port
+      admin_username      = local.admin_username
+      fqdn                = azurerm_public_ip.main.fqdn
+      public_ip           = azurerm_public_ip.main.ip_address
+      http_port           = local.http_port
+      https_port          = local.https_port
+      email               = local.email
+      ssh_vm_port         = local.ssh_vm_port
+      enable_cert_manager = local.enable_cert_manager
     })
   }
+}
+
+data "http" "ip_address" {
+  url = "http://ipv4.icanhazip.com"
 }
 
 locals {
@@ -70,7 +75,7 @@ locals {
   random_id           = "${random_string.first_character.result}${random_string.six_character.result}"
   suffix              = coalesce(var.suffix, local.random_id)
   public_key          = tls_private_key.main.public_key_openssh
-  ip_address          = var.ip_address
+  ip_address          = coalesce(var.ip_address, chomp(data.http.ip_address.body))
   admin_username      = var.admin_username
   domain_name_label   = local.random_id
   ssh_port            = random_integer.ssh.result
@@ -81,6 +86,7 @@ locals {
   size                = var.size
   email               = var.email
   ssh_vm_port         = random_integer.ssh_vm.result
+  enable_cert_manager = var.enable_cert_manager
 }
 
 module "naming" {

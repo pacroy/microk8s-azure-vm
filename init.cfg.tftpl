@@ -32,10 +32,13 @@ runcmd:
       --set "controller.service.type=NodePort" \
       --set "controller.service.nodePorts.http=${http_port}" \
       --set "controller.service.nodePorts.https=${https_port}"
-    echo "Installing cert-manager ..."
-    microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
-    echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
-    microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
+  - |
+    if [ "${enable_cert_manager}" = "true" ]; then
+      echo "Installing cert-manager ..."
+      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
+      echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
+      microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
+    fi
   - |
     echo "Configuring unattended upgrades ..."
     sed -i "s/\/\/Unattended-Upgrade::Remove-Unused-Dependencies \"false\";/Unattended-Upgrade::Remove-Unused-Dependencies \"true\";/" /etc/apt/apt.conf.d/50unattended-upgrades
