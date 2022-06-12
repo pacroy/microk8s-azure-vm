@@ -63,3 +63,7 @@ output "ip_address" {
 output "email" {
   value = local.email
 }
+
+output "location" {
+  value = local.location
+}
