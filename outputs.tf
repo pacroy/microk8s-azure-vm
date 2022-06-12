@@ -55,3 +55,11 @@ output "public_ip" {
 output "lb" {
   value = azurerm_lb.main
 }
+
+output "ip_address" {
+  value = local.ip_address
+}
+
+output "email" {
+  value = local.email
+}
