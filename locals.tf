@@ -84,7 +84,7 @@ locals {
   https_port          = random_integer.https.result
   address_space       = var.address_space
   size                = var.size
-  email               = var.email
+  email               = coalesce(var.email, "${local.random_id}@mailinator.com")
   ssh_vm_port         = random_integer.ssh_vm.result
   enable_cert_manager = var.enable_cert_manager
 }
