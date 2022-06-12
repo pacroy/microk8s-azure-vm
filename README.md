@@ -68,8 +68,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     ```sh
     terraform apply \
         -var resource_group_name=rg-myk8s \
-        -var suffix=myk8s \
-        -var email=youremail@domain.com
+        -var suffix=myk8s
     ```
 
     _You can add `-var enable_cert_manager=false` if you don't want to install cert-manager and Let's Encrypt clusterr-issuer._
