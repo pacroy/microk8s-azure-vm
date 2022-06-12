@@ -146,3 +146,29 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     ```sh
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
     ```
+
+## Troubleshooting
+
+### Display cloud-init Output Log
+
+```sh
+tail +1f /var/log/cloud-init-output.log
+```
+
+### Display unattended-upgrades Log
+
+```sh
+# Display upgrade log
+sudo tail -F /var/log/apt/history.log
+
+# Display output log
+sudo tail -F /var/log/apt/term.log
+```
+
+### Identify hostpath Storage Location
+
+Execute the command below and look for `Path` within `Pod Template`/`Volumes`/`pv-volume`.
+
+```sh
+sudo microk8s kubectl describe deploy/hostpath-provisioner -n kube-system
+```
