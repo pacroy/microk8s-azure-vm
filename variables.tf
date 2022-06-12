@@ -16,7 +16,7 @@ variable "location" {
 }
 
 variable "email" {
-  description = "Email address for receiving notifications from Let's Encrypt. Default "
+  description = "Email address for receiving notifications from Let's Encrypt. Default is `<random_id>@mailinator.com`."
   type        = string
   default     = ""
 }
