@@ -171,8 +171,16 @@ sudo tail -F /var/log/apt/term.log
 
 ### Identify hostpath Storage Location
 
+```sh
 SSH into the server and execute the command below then look for `Path` within `Pod Template`/`Volumes`/`pv-volume`.
 
-```sh
 sudo microk8s kubectl describe deploy/hostpath-provisioner -n kube-system
+```
+
+### Display the Microk8s status
+
+SSH into the server and execute the command below.
+
+```sh
+sudo microk8s status
 ```
