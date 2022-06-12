@@ -151,7 +151,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 ### Display cloud-init Output Log
 
-SSH into the server and execute the command below.
+SSH into the VM and execute the command below.
 
 ```sh
 tail +1f /var/log/cloud-init-output.log
@@ -159,7 +159,7 @@ tail +1f /var/log/cloud-init-output.log
 
 ### Display unattended-upgrades Log
 
-SSH into the server and execute the command below.
+SSH into the VM and execute the command below.
 
 ```sh
 # Display upgrade log
@@ -172,14 +172,14 @@ sudo tail -F /var/log/apt/term.log
 ### Identify hostpath Storage Location
 
 ```sh
-SSH into the server and execute the command below then look for `Path` within `Pod Template`/`Volumes`/`pv-volume`.
+SSH into the VM and execute the command below then look for `Path` within `Pod Template`/`Volumes`/`pv-volume`.
 
 sudo microk8s kubectl describe deploy/hostpath-provisioner -n kube-system
 ```
 
 ### Display the Microk8s status
 
-SSH into the server and execute the command below.
+SSH into the VM and execute the command below.
 
 ```sh
 sudo microk8s status
