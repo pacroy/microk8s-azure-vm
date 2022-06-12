@@ -184,3 +184,11 @@ SSH into the VM and execute the command below.
 ```sh
 sudo microk8s status
 ```
+
+### Display Number of Upgradable Packages
+
+SSH into the VM and execute the command below.
+
+```sh
+/usr/lib/update-notifier/apt-check --human-readable
+```
