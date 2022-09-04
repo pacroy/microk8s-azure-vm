@@ -50,7 +50,6 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v4
         env:
-          VALIDATE_ALL_CODEBASE: ${{ secrets.LINTER_VALIDATE_ALL_CODEBASE }}
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_NATURAL_LANGUAGE: false

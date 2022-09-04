@@ -1,4 +1,5 @@
 terraform {
+  backend "remote" {}
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
