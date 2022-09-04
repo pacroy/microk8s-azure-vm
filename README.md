@@ -46,17 +46,13 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 1. Go to [Terraform Cloud](https://app.terraform.io/) and create a new workspace.
 
-2. Choose `Version control workflow`.
+2. Choose `CLI-driven workflow`.
 
-3. Choose GitHub and select this repository.
+3. Name your workspace and click `Create workspace`.
 
-4. Name your workspace and click `Create workspace`.
+4. Go to tab `Variables`.
 
-5. Click `Go to workspace overview`.
-
-6. Click `Configure variables` or go to tab `Variables`.
-
-7. Add the following Terraform variables:
+5. Add the following Terraform variables:
 
     Variable | Description
     ---|---
@@ -66,50 +62,43 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     _Note: See all variables in [variables.tf](variables.tf)_
 
-8. Add the following Environment variables:
+6. Add the following Environment variables:
 
-Variable | Description
----|---
-ARM_CLIENT_ID | Azure AD application ID of  the service principal that have permissions to provision resources.
-ARM_CLIENT_SECRET | Azure AD application secret. Dont' forget to mark `Sensitive`.
-ARM_SUBSCRIPTION_ID | Azure subscription ID.
-ARM_TENANT_ID | Azure tenant ID.
+    Variable | Description
+    ---|---
+    ARM_CLIENT_ID | Azure AD application ID of  the service principal that have permissions to provision resources.
+    ARM_CLIENT_SECRET | Azure AD application secret. Dont' forget to mark `Sensitive`.
+    ARM_SUBSCRIPTION_ID | Azure subscription ID.
+    ARM_TENANT_ID | Azure tenant ID.
 
-9. Click `Actions` --> `Start new run`.
+7. Update [`cloud.tfbackend`](cloud.tfbackend) to point to your Terraform Cloud organization and workspace.
 
-2. Create a new workspace, if you want
-
-    ```sh
-    terraform workspace new myk8s
-    ```
-
-3. Apply by giving the following variables:
-
-    - Resource group name.
-    - Suffix that will be use to name your resources, will be randomly generated if omit.
-    - Public ip address of your computer to securely allow only you to connect and control the VM/cluster.
-    - Email for Let's Encrypt notifications of certificate expirations
-
-    _See all available variables in [variables.tf](variables.tf)_
+8. In your terminal, log in Terraform cloud using.
 
     ```sh
-    terraform apply \
-        -var resource_group_name=rg-myk8s \
-        -var suffix=myk8s
+    terraform login
     ```
 
-    _You can add `-var enable_cert_manager=false` if you don't want to install cert-manager and Let's Encrypt cluster-issuer._
+9. Initialize.
 
-    Enter `yes` to confirm to proceed.
+    ```sh
+    terraform init -backend-config=cloud.tfbackend
+    ```
 
-4. Once completed, create SSH key file as you need this to SSH into the VM.
+10. Apply.
+
+    ```sh
+    terraform apply
+    ```
+
+11. Once apply completed, create SSH key file as you need this to SSH into the VM.
 
     ```sh
     terraform output -raw private_key > id_rsa
     chmod 600 id_rsa
     ```
 
-5. SSH into the VM. Note: You might need to wait a bit before you can connect.
+12. SSH into the VM. Note: You might need to wait a bit before you can connect.
 
     ```sh
     SSH_PORT="$(terraform output ssh_port)"
@@ -121,7 +110,7 @@ ARM_TENANT_ID | Azure tenant ID.
 
     Enter `yes` to confirm to connect.
 
-6. In SSH session, follow cloud-init logs.
+13. In SSH session, follow cloud-init logs.
 
     ```sh
     tail +1f /var/log/cloud-init-output.log
@@ -136,19 +125,19 @@ ARM_TENANT_ID | Azure tenant ID.
 
     Press <kbd>Ctrl + C</kbd> to exit from the log. Then press <kbd>Ctrl + D</kbd> to quit the SSH session.
 
-7. Download KUBECONFIG file.
+14. Download KUBECONFIG file.
 
     ```sh
     scp -i id_rsa -P $(terraform output ssh_port) azureuser@$(terraform output -json public_ip | jq -r ".fqdn"):admin.config admin.config
     ```
 
-8. Note the FQDN and port of your VM.
+15. Note the FQDN and port of your VM.
 
     ```sh
     echo "server: $(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
     ```
 
-9. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
+16. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
 
     ```yaml
     apiVersion: v1
@@ -158,7 +147,7 @@ ARM_TENANT_ID | Azure tenant ID.
         server: https://xxxxxxx.southeastasia.cloudapp.azure.com:2xxxx
     ```
 
-10. Test kubectl connection.
+17. Test kubectl connection.
 
     ```sh
     export KUBECONFIG=admin.config
@@ -167,7 +156,7 @@ ARM_TENANT_ID | Azure tenant ID.
 
     You should see the only node of your MicroK8s cluster and it is now ready for your use.
 
-11. You can see your server ingress public IP address using this command:
+18. You can see your server ingress public IP address using this command:
 
     ```sh
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
