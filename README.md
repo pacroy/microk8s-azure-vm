@@ -44,11 +44,38 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 ## Usage
 
-1. Initialize Terraform
+1. Go to [Terraform Cloud](https://app.terraform.io/) and create a new workspace.
 
-    ```sh
-    terraform init
-    ```
+2. Choose `Version control workflow`.
+
+3. Choose GitHub and select this repository.
+
+4. Name your workspace and click `Create workspace`.
+
+5. Click `Go to workspace overview`.
+
+6. Click `Configure variables` or go to tab `Variables`.
+
+7. Add the following Terraform variables:
+
+    Variable | Description
+    ---|---
+    resource_group_name | Resource group name to provision all resources.
+    suffix | Suffix of all resource names.
+    ip_address | IP address or range to allow access to the control ports of the VM.
+
+    _Note: See all variables in [variables.tf](variables.tf)_
+
+8. Add the following Environment variables:
+
+Variable | Description
+---|---
+ARM_CLIENT_ID | Azure AD application ID of  the service principal that have permissions to provision resources.
+ARM_CLIENT_SECRET | Azure AD application secret. Dont' forget to mark `Sensitive`.
+ARM_SUBSCRIPTION_ID | Azure subscription ID.
+ARM_TENANT_ID | Azure tenant ID.
+
+9. Click `Actions` --> `Start new run`.
 
 2. Create a new workspace, if you want
 
@@ -71,7 +98,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
         -var suffix=myk8s
     ```
 
-    _You can add `-var enable_cert_manager=false` if you don't want to install cert-manager and Let's Encrypt clusterr-issuer._
+    _You can add `-var enable_cert_manager=false` if you don't want to install cert-manager and Let's Encrypt cluster-issuer._
 
     Enter `yes` to confirm to proceed.
 
