@@ -46,3 +46,4 @@ admin.config
 .DS_Store
 *tfplan*
 *.tfbackend
+!cloud.tfbackend
