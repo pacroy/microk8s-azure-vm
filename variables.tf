@@ -9,6 +9,12 @@ variable "ip_address" {
   default     = ""
 }
 
+variable "ip_address_list" {
+  description = "List of IP address or range to allow access to the control ports of the VM. Specify this variable will ignore `ip_address`."
+  type        = list(string)
+  default     = null
+}
+
 variable "location" {
   description = "The location to provision all resources. Omit to use the same location as the resource group."
   type        = string

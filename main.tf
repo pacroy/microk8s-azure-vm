@@ -10,6 +10,7 @@ resource "azurerm_network_security_rule" "allow_control" {
 
   direction                  = "Inbound"
   source_address_prefix      = local.ip_address
+  source_address_prefixes    = local.ip_address_list
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = [local.ssh_vm_port, "16443"]
