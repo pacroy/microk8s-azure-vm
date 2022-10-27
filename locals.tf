@@ -75,7 +75,6 @@ locals {
   random_id           = "${random_string.first_character.result}${random_string.six_character.result}"
   suffix              = coalesce(var.suffix, local.random_id)
   public_key          = tls_private_key.main.public_key_openssh
-  ip_address          = coalesce(var.ip_address, chomp(data.http.ip_address.body))
   admin_username      = var.admin_username
   domain_name_label   = local.random_id
   ssh_port            = random_integer.ssh.result
@@ -87,6 +86,9 @@ locals {
   email               = coalesce(var.email, "${local.random_id}@mailinator.com")
   ssh_vm_port         = random_integer.ssh_vm.result
   enable_cert_manager = var.enable_cert_manager
+
+  ip_address          = var.ip_address_list != null ? null : coalesce(var.ip_address, chomp(data.http.ip_address.body))
+  ip_address_list     = var.ip_address_list
 }
 
 module "naming" {
