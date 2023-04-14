@@ -162,6 +162,12 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
     ```
 
+## Post-installation Instructions
+
+1. Go to Azure Portal and navigate to the virtual machine -> _Policies_. Make sure all policies are in _Compliant_ state except the `Azure Security Center Recommendations`.
+2. Go to _Extensions + applications_. If there is `MMAExtension`, click it to open and choose _Enable automatic upgrade_.
+3. Go to _Disks_ -> _Addiitonal settings_. Scroll down to _Encryption settings_ and select _Disks to encrypt_ to `OS and data disks`. Follow on-screen instructions to create a new Key Vault and a new encryption key.
+
 ## Troubleshooting
 
 ### Display cloud-init Output Log
