@@ -164,11 +164,8 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 ## Post-installation Instructions
 
-1. Go to Azure Portal and navigate to the virtual machine -> _Policies_. Make sure all policies are in _Compliant_ state except the `Azure Security Center Recommendations`.
-2. Go to _Extensions + applications_. If there is `MMAExtension`, make sure it is in `Provisioning succeeded` status. Then, click to open it and select _Enable automatic upgrade_.
-3. Go to _Disks_ -> _Addiitonal settings_. Scroll down to _Encryption settings_ and select _Disks to encrypt_ to `OS and data disks`. Follow on-screen instructions to create a new Key Vault and a new encryption key.
-4. Go to _Updates_ -> _Updates seetings_ and choose to enable _Periodic assessment_ and select `Azure-orchestrated` for Patch orchestration.
-5. Go back to _Updates_ -> Schedule updates and create a new maintenance configuration to schedule update for your VM as you wish.
+1. Go to Azure Portal and stop the virtual machine.
+2. Navigate to _Disks_ -> _Additonal settings_ and enable _Encryption at host_ then start the virtual machine.
 
 ## Troubleshooting
 
