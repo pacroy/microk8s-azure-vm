@@ -162,10 +162,45 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
     ```
 
-## Post-installation Instructions
+## Post-installation Recommendations
 
-1. Go to Azure Portal and stop the virtual machine.
-2. Navigate to _Disks_ -> _Additonal settings_ and enable _Encryption at host_ then start the virtual machine.
+### a. Enable Encryption
+
+1. Check if `EncryptionAtHost` feature is registered in the current subscription.
+
+    ```sh
+    az feature show --namespace Microsoft.Compute --name EncryptionAtHost
+    ```
+
+    Make sure the state is `Registered`
+
+    ```console
+    {
+    "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/providers/Microsoft.Features/providers/Microsoft.Compute/features/EncryptionAtHost",
+    "name": "Microsoft.Compute/EncryptionAtHost",
+    "properties": {
+        "state": "Registered"
+    },
+    "type": "Microsoft.Features/providers/features"
+    }
+    ```
+
+2. If the feature is not registed, use this command to register.
+
+    ```sh
+    az feature show --namespace Microsoft.Compute --name EncryptionAtHost
+    ```
+
+    Use the command in 1 to check the state. It might take sometime to change from `Registering` to `Registered`.
+
+    Once registered, use this command again to ensure the new settings is propagated throughtout the subscription.
+
+    ```sh
+    az provider register -n Microsoft.Compute
+    ```
+
+3. Go to Azure Portal and stop the virtual machine.
+4. Navigate to _Disks_ -> _Additonal settings_ and enable `Encryption at host` then start the virtual machine.
 
 ## Troubleshooting
 
