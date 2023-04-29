@@ -4,7 +4,6 @@ resource "azurerm_public_ip" "main" {
   location            = local.location
 
   allocation_method = "Static"
-  availability_zone = "No-Zone"
   domain_name_label = local.domain_name_label
   sku               = "Standard"
   sku_tier          = "Regional"
