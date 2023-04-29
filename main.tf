@@ -14,7 +14,7 @@ resource "azurerm_network_security_rule" "allow_control" {
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = [local.ssh_vm_port, "16443"]
-  protocol                   = "TCP"
+  protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 100
   name                       = "AllowControlFromIP"
@@ -29,7 +29,7 @@ resource "azurerm_network_security_rule" "allow_https" {
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = [local.http_port, local.https_port]
-  protocol                   = "TCP"
+  protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 110
   name                       = "AllowHTTPsFromInternet"
@@ -45,7 +45,7 @@ resource "azurerm_network_security_rule" "allow_azurecloud" {
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = ["16443"]
-  protocol                   = "TCP"
+  protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 120
   name                       = "AllowControlFromAzureCloud"
