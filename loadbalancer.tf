@@ -37,7 +37,6 @@ resource "azurerm_lb_backend_address_pool_address" "main" {
 }
 
 resource "azurerm_lb_probe" "vm_main" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "ssh"
   protocol            = "Tcp"
@@ -102,7 +101,6 @@ resource "azurerm_lb_rule" "https" {
 }
 
 resource "azurerm_lb_outbound_rule" "main" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "rule-outbound"
 
