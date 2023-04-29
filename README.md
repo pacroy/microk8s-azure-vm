@@ -44,61 +44,77 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 ## Usage
 
+### A. Create Terraform Workspace
+
 1. Go to [Terraform Cloud](https://app.terraform.io/) and create a new workspace.
 
 2. Choose `CLI-driven workflow`.
 
 3. Name your workspace and click `Create workspace`.
 
-4. Go to tab `Variables`.
+### B. Configure Workspace
 
-5. Add the following Terraform variables:
+#### Remote Execution
 
-    Variable | Description
-    ---|---
-    resource_group_name | Resource group name to provision all resources.
-    suffix | Suffix of all resource names.
-    ip_address | IP address or range to allow access to the control ports of the VM.
+Use this method if you have [Azure service principal](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals) with client ID and secret. Otherwise, see [Local Execution](#local-execution).
+
+1. Go to tab `Variables`.
+
+2. Add the following Terraform variables:
+
+    | Variable            | Description                                                         |
+    | ------------------- | ------------------------------------------------------------------- |
+    | resource_group_name | Resource group name to provision all resources.                     |
+    | suffix              | Suffix of all resource names.                                       |
+    | ip_address          | IP address or range to allow access to the control ports of the VM. |
 
     _Note: See all variables in [variables.tf](variables.tf)_
 
-6. Add the following Environment variables:
+3. Add the following Environment variables:
 
-    Variable | Description
-    ---|---
-    ARM_CLIENT_ID | Azure AD application ID of  the service principal that have permissions to provision resources.
-    ARM_CLIENT_SECRET | Azure AD application secret. Dont' forget to mark `Sensitive`.
-    ARM_SUBSCRIPTION_ID | Azure subscription ID.
-    ARM_TENANT_ID | Azure tenant ID.
+    | Variable            | Description                                                                                     |
+    | ------------------- | ----------------------------------------------------------------------------------------------- |
+    | ARM_CLIENT_ID       | Azure AD application ID of  the service principal that have permissions to provision resources. |
+    | ARM_CLIENT_SECRET   | Azure AD application secret. Dont' forget to mark `Sensitive`.                                  |
+    | ARM_SUBSCRIPTION_ID | Azure subscription ID.                                                                          |
+    | ARM_TENANT_ID       | Azure tenant ID.                                                                                |
 
-7. Update [`cloud.tfbackend`](cloud.tfbackend) to point to your Terraform Cloud organization and workspace.
+#### Local Execution
 
-8. In your terminal, log in Terraform cloud using.
+Use this method if you use your personal credential to log in Azure.
+
+### C. Create Infrastructure
+
+1. Update [`cloud.tfbackend`](cloud.tfbackend) to point to your Terraform Cloud organization and workspace.
+
+2. In your terminal, log in Terraform cloud using.
 
     ```sh
     terraform login
     ```
 
-9. Initialize.
+3. Initialize.
 
     ```sh
     terraform init -backend-config=cloud.tfbackend
     ```
 
-10. Apply.
+4. Apply.
 
     ```sh
     terraform apply
     ```
 
-11. Once apply completed, create SSH key file as you need this to SSH into the VM.
+### D. Configure and Connect
+
+1. Once apply completed, create SSH key file as you need this to SSH into the VM.
 
     ```sh
     terraform output -raw private_key > id_rsa
     chmod 600 id_rsa
     ```
 
-12. SSH into the VM. Note: You might need to wait a bit before you can connect.
+2. SSH into the VM. Note: You might need to wait a bit before you can connect.
 
     ```sh
     SSH_PORT="$(terraform output ssh_port)"
@@ -110,7 +126,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     Enter `yes` to confirm to connect.
 
-13. In SSH session, follow cloud-init logs.
+3. In SSH session, follow cloud-init logs.
 
     ```sh
     tail +1f /var/log/cloud-init-output.log
@@ -125,19 +141,19 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     Press <kbd>Ctrl + C</kbd> to exit from the log. Then press <kbd>Ctrl + D</kbd> to quit the SSH session.
 
-14. Download KUBECONFIG file.
+4. Download KUBECONFIG file.
 
     ```sh
     scp -i id_rsa -P $(terraform output ssh_port) azureuser@$(terraform output -json public_ip | jq -r ".fqdn"):admin.config admin.config
     ```
 
-15. Note the FQDN and port of your VM.
+5. Note the FQDN and port of your VM.
 
     ```sh
     echo "server: $(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
     ```
 
-16. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
+6. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
 
     ```yaml
     apiVersion: v1
@@ -147,7 +163,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
         server: https://xxxxxxx.southeastasia.cloudapp.azure.com:2xxxx
     ```
 
-17. Test kubectl connection.
+7. Test kubectl connection.
 
     ```sh
     export KUBECONFIG=admin.config
@@ -156,7 +172,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     You should see the only node of your MicroK8s cluster and it is now ready for your use.
 
-18. You can see your server ingress public IP address using this command:
+8. You can see your server ingress public IP address using this command:
 
     ```sh
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
