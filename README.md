@@ -227,47 +227,29 @@ Use this method if you use your personal credential to log in Azure.
 
 9. Configure your DNS record to point to the IP address accordingly.
 
-## Post-installation Recommendations
-
-### a. Enable Encryption
-
-1. Check if `EncryptionAtHost` feature is registered in the current subscription.
-
-    ```sh
-    az feature show --namespace Microsoft.Compute --name EncryptionAtHost
-    ```
-
-    Make sure the state is `Registered`
-
-    ```console
-    {
-    "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/providers/Microsoft.Features/providers/Microsoft.Compute/features/EncryptionAtHost",
-    "name": "Microsoft.Compute/EncryptionAtHost",
-    "properties": {
-        "state": "Registered"
-    },
-    "type": "Microsoft.Features/providers/features"
-    }
-    ```
-
-2. If the feature is not registered, use this command to register.
-
-    ```sh
-    az feature register --namespace Microsoft.Compute --name EncryptionAtHost
-    ```
-
-    Use the command in 1 to check the state. It might take sometime to change from `Registering` to `Registered`.
-
-    Once registered, use this command again to ensure the new settings is propagated throughtout the subscription.
-
-    ```sh
-    az provider register -n Microsoft.Compute
-    ```
-
-3. Go to Azure Portal and stop the virtual machine.
-4. Navigate to *Disks* -> *Additonal settings* and enable `Encryption at host` then start the virtual machine.
-
 ## Troubleshooting
+
+### EncryptionAtHost feature is not enabled
+
+Use this command to register EncryptionAtHost within your subscription.
+
+```sh
+az feature register --namespace Microsoft.Compute --name EncryptionAtHost
+```
+
+Use this command to check the state. Wait until it changes from `Registering` to `Registered`.
+
+```sh
+az feature show --namespace Microsoft.Compute --name EncryptionAtHost
+```
+
+Once the state becomes registered, use this command again to ensure the new settings is propagated throughtout the subscription.
+
+```sh
+az provider register -n Microsoft.Compute
+```
+
+Reapply again.
 
 ### Display cloud-init Output Log
 
