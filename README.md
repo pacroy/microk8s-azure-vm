@@ -52,15 +52,20 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 3. Name your workspace and click `Create workspace`.
 
-### B. Configure Workspace
+### B. Execute Apply
+
+There are 2 ways to execute your workspace:
+
+- [Remote Execution](#remote-execution)
+- [Local Execution](#local-execution)
 
 #### Remote Execution
 
-Use this method if you have [Azure service principal](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals) with client ID and secret. Otherwise, see [Local Execution](#local-execution).
+Use this method if you have [Azure service principal](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals) with client ID and secret. Otherwise, use [Local Execution](#local-execution).
 
-1. Go to tab `Variables`.
+1. In your Terraform workspace, go to *Variables*.
 
-2. Add the following Terraform variables:
+2. Add the following `Terraform variables`:
 
     | Variable            | Description                                                         |
     | ------------------- | ------------------------------------------------------------------- |
@@ -68,9 +73,9 @@ Use this method if you have [Azure service principal](https://learn.microsoft.co
     | suffix              | Suffix of all resource names.                                       |
     | ip_address          | IP address or range to allow access to the control ports of the VM. |
 
-    _Note: See all variables in [variables.tf](variables.tf)_
+    *Note: See all variables in [variables.tf](variables.tf)*
 
-3. Add the following Environment variables:
+3. Add the following `Environment variables`:
 
     | Variable            | Description                                                                                     |
     | ------------------- | ----------------------------------------------------------------------------------------------- |
@@ -79,33 +84,75 @@ Use this method if you have [Azure service principal](https://learn.microsoft.co
     | ARM_SUBSCRIPTION_ID | Azure subscription ID.                                                                          |
     | ARM_TENANT_ID       | Azure tenant ID.                                                                                |
 
-#### Local Execution
-
-Use this method if you use your personal credential to log in Azure.
-
-### C. Create Infrastructure
-
-1. Update [`cloud.tfbackend`](cloud.tfbackend) to point to your Terraform Cloud organization and workspace.
-
-2. In your terminal, log in Terraform cloud using.
+4. In your terminal, log in Terraform cloud.
 
     ```sh
     terraform login
     ```
 
-3. Initialize.
+5. Configure the following environment variables:
 
     ```sh
-    terraform init -backend-config=cloud.tfbackend
+    export TF_CLOUD_ORGANIZATION="your_terraform_cloud_org"
+    export TF_WORKSPACE="your_workspace_name"
     ```
 
-4. Apply.
+6. Initialize.
+
+    ```sh
+    terraform init
+    ```
+
+7. Apply.
 
     ```sh
     terraform apply
     ```
 
-### D. Configure and Connect
+#### Local Execution
+
+Use this method if you use your personal credential to log in Azure.
+
+1. In your Terraform workspace, go to *Settings* -> *General* and change *Execution Mode* to `Local`.
+2. In your terminal, log in to Azure using `az login` command.
+3. Make sure you switch to the right subscription.
+
+    ```sh
+    az account set --subscription "your_subscription_name"
+    ```
+
+4. Log in Terraform cloud.
+
+    ```sh
+    terraform login
+    ```
+
+5. Configure the following environment variables:
+
+    ```sh
+    export TF_CLOUD_ORGANIZATION="your_terraform_cloud_org"
+    export TF_WORKSPACE="your_workspace_name"
+    ```
+
+6. Initialize.
+
+    ```sh
+    terraform init
+    ```
+
+7. Apply.
+
+    ```sh
+    terraform apply -var resource_group_name="your_resource_group" -var suffix="your_instance_suffix"
+    ```
+
+    If you want to specify your IP address ranges, add `-var ip_address_list` like this:
+
+    ```sh
+    terraform apply -var resource_group_name="your_resource_group" -var suffix="your_instance_suffix" -var ip_address_list='["1.2.3.4/24","5.6.7.8/24"]'
+    ```
+
+### C. Configure and Connect
 
 1. Once apply completed, create SSH key file as you need this to SSH into the VM.
 
@@ -216,7 +263,7 @@ Use this method if you use your personal credential to log in Azure.
     ```
 
 3. Go to Azure Portal and stop the virtual machine.
-4. Navigate to _Disks_ -> _Additonal settings_ and enable `Encryption at host` then start the virtual machine.
+4. Navigate to *Disks* -> *Additonal settings* and enable `Encryption at host` then start the virtual machine.
 
 ## Troubleshooting
 
