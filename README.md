@@ -197,7 +197,7 @@ Use this method if you use your personal credential to log in Azure.
 5. Note the FQDN and port of your VM.
 
     ```sh
-    echo "server: $(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
+    echo "server: https://$(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
     ```
 
 6. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
@@ -219,11 +219,13 @@ Use this method if you use your personal credential to log in Azure.
 
     You should see the only node of your MicroK8s cluster and it is now ready for your use.
 
-8. You can see your server ingress public IP address using this command:
+8. You can get your server ingress public IP address using this command:
 
     ```sh
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
     ```
+
+9. Configure your DNS record to point to the IP address accordingly.
 
 ## Post-installation Recommendations
 
