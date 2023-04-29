@@ -185,10 +185,10 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
     }
     ```
 
-2. If the feature is not registed, use this command to register.
+2. If the feature is not registered, use this command to register.
 
     ```sh
-    az feature show --namespace Microsoft.Compute --name EncryptionAtHost
+    az feature register --namespace Microsoft.Compute --name EncryptionAtHost
     ```
 
     Use the command in 1 to check the state. It might take sometime to change from `Registering` to `Registered`.
