@@ -6,7 +6,7 @@ resource "random_string" "first_character" {
   length  = 1
   special = false
   upper   = false
-  numeric  = false
+  numeric = false
 }
 
 resource "random_string" "six_character" {
