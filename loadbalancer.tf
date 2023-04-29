@@ -45,7 +45,6 @@ resource "azurerm_lb_probe" "vm_main" {
 }
 
 resource "azurerm_lb_rule" "ssh" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "rule-ssh"
 
@@ -59,7 +58,6 @@ resource "azurerm_lb_rule" "ssh" {
 }
 
 resource "azurerm_lb_rule" "kubectl" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "rule-kubectl"
 
@@ -73,7 +71,6 @@ resource "azurerm_lb_rule" "kubectl" {
 }
 
 resource "azurerm_lb_rule" "http" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "rule-http"
 
@@ -87,7 +84,6 @@ resource "azurerm_lb_rule" "http" {
 }
 
 resource "azurerm_lb_rule" "https" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "rule-https"
 
