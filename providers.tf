@@ -1,28 +1,27 @@
 terraform {
-  backend "remote" {}
+  cloud {}
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~>2.95.0"
+      version = "~>3.54.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~>3.1.0"
+      version = "~>3.5.1"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "~>3.1.0"
+      version = "~>4.0.4"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
-      version = "2.2.0"
+      version = "~>2.3.2"
     }
     http = {
       source  = "hashicorp/http"
-      version = "2.1.0"
+      version = "~>3.3.0"
     }
   }
-  #   backend "azurerm" {}
 }
 
 provider "azurerm" {

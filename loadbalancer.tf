@@ -4,7 +4,6 @@ resource "azurerm_public_ip" "main" {
   location            = local.location
 
   allocation_method = "Static"
-  availability_zone = "No-Zone"
   domain_name_label = local.domain_name_label
   sku               = "Standard"
   sku_tier          = "Regional"
@@ -38,7 +37,6 @@ resource "azurerm_lb_backend_address_pool_address" "main" {
 }
 
 resource "azurerm_lb_probe" "vm_main" {
-  resource_group_name = local.resource_group_name
   loadbalancer_id     = azurerm_lb.main.id
   name                = "ssh"
   protocol            = "Tcp"
@@ -47,9 +45,8 @@ resource "azurerm_lb_probe" "vm_main" {
 }
 
 resource "azurerm_lb_rule" "ssh" {
-  resource_group_name = local.resource_group_name
-  loadbalancer_id     = azurerm_lb.main.id
-  name                = "rule-ssh"
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "rule-ssh"
 
   protocol                       = "Tcp"
   frontend_port                  = local.ssh_port
@@ -61,9 +58,8 @@ resource "azurerm_lb_rule" "ssh" {
 }
 
 resource "azurerm_lb_rule" "kubectl" {
-  resource_group_name = local.resource_group_name
-  loadbalancer_id     = azurerm_lb.main.id
-  name                = "rule-kubectl"
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "rule-kubectl"
 
   protocol                       = "Tcp"
   frontend_port                  = local.kubectl_port
@@ -75,9 +71,8 @@ resource "azurerm_lb_rule" "kubectl" {
 }
 
 resource "azurerm_lb_rule" "http" {
-  resource_group_name = local.resource_group_name
-  loadbalancer_id     = azurerm_lb.main.id
-  name                = "rule-http"
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "rule-http"
 
   protocol                       = "Tcp"
   frontend_port                  = 80
@@ -89,9 +84,8 @@ resource "azurerm_lb_rule" "http" {
 }
 
 resource "azurerm_lb_rule" "https" {
-  resource_group_name = local.resource_group_name
-  loadbalancer_id     = azurerm_lb.main.id
-  name                = "rule-https"
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "rule-https"
 
   protocol                       = "Tcp"
   frontend_port                  = 443
@@ -103,9 +97,8 @@ resource "azurerm_lb_rule" "https" {
 }
 
 resource "azurerm_lb_outbound_rule" "main" {
-  resource_group_name = local.resource_group_name
-  loadbalancer_id     = azurerm_lb.main.id
-  name                = "rule-outbound"
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "rule-outbound"
 
   protocol                 = "All"
   backend_address_pool_id  = azurerm_lb_backend_address_pool.main.id

@@ -14,7 +14,7 @@ resource "azurerm_network_security_rule" "allow_control" {
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = [local.ssh_vm_port, "16443"]
-  protocol                   = "TCP"
+  protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 100
   name                       = "AllowControlFromIP"
@@ -29,7 +29,7 @@ resource "azurerm_network_security_rule" "allow_https" {
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = [local.http_port, local.https_port]
-  protocol                   = "TCP"
+  protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 110
   name                       = "AllowHTTPsFromInternet"
@@ -45,7 +45,7 @@ resource "azurerm_network_security_rule" "allow_azurecloud" {
   source_port_range          = "*"
   destination_address_prefix = "*"
   destination_port_ranges    = ["16443"]
-  protocol                   = "TCP"
+  protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 120
   name                       = "AllowControlFromAzureCloud"
@@ -85,9 +85,10 @@ resource "azurerm_linux_virtual_machine" "main" {
   resource_group_name = local.resource_group_name
   location            = local.location
 
-  size                  = local.size
-  admin_username        = local.admin_username
-  network_interface_ids = [azurerm_network_interface.main.id]
+  size                       = local.size
+  admin_username             = local.admin_username
+  network_interface_ids      = [azurerm_network_interface.main.id]
+  encryption_at_host_enabled = true
 
   admin_ssh_key {
     username   = local.admin_username

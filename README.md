@@ -44,61 +44,124 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
 ## Usage
 
+### A. Create Terraform Workspace
+
 1. Go to [Terraform Cloud](https://app.terraform.io/) and create a new workspace.
 
 2. Choose `CLI-driven workflow`.
 
 3. Name your workspace and click `Create workspace`.
 
-4. Go to tab `Variables`.
+### B. Execute Apply
 
-5. Add the following Terraform variables:
+There are 2 ways to execute your workspace:
 
-    Variable | Description
-    ---|---
-    resource_group_name | Resource group name to provision all resources.
-    suffix | Suffix of all resource names.
-    ip_address | IP address or range to allow access to the control ports of the VM.
+- [Remote Execution](#remote-execution)
+- [Local Execution](#local-execution)
 
-    _Note: See all variables in [variables.tf](variables.tf)_
+#### Remote Execution
 
-6. Add the following Environment variables:
+Use this method if you have [Azure service principal](https://learn.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals) with client ID and secret. Otherwise, use [Local Execution](#local-execution).
 
-    Variable | Description
-    ---|---
-    ARM_CLIENT_ID | Azure AD application ID of  the service principal that have permissions to provision resources.
-    ARM_CLIENT_SECRET | Azure AD application secret. Dont' forget to mark `Sensitive`.
-    ARM_SUBSCRIPTION_ID | Azure subscription ID.
-    ARM_TENANT_ID | Azure tenant ID.
+1. In your Terraform workspace, go to *Variables*.
 
-7. Update [`cloud.tfbackend`](cloud.tfbackend) to point to your Terraform Cloud organization and workspace.
+2. Add the following `Terraform variables`:
 
-8. In your terminal, log in Terraform cloud using.
+    | Variable            | Description                                                         |
+    | ------------------- | ------------------------------------------------------------------- |
+    | resource_group_name | Resource group name to provision all resources.                     |
+    | suffix              | Suffix of all resource names.                                       |
+    | ip_address          | IP address or range to allow access to the control ports of the VM. |
+
+    *Note: See all variables in [variables.tf](variables.tf)*
+
+3. Add the following `Environment variables`:
+
+    | Variable            | Description                                                                                     |
+    | ------------------- | ----------------------------------------------------------------------------------------------- |
+    | ARM_CLIENT_ID       | Azure AD application ID of  the service principal that have permissions to provision resources. |
+    | ARM_CLIENT_SECRET   | Azure AD application secret. Dont' forget to mark `Sensitive`.                                  |
+    | ARM_SUBSCRIPTION_ID | Azure subscription ID.                                                                          |
+    | ARM_TENANT_ID       | Azure tenant ID.                                                                                |
+
+4. In your terminal, log in Terraform cloud.
 
     ```sh
     terraform login
     ```
 
-9. Initialize.
+5. Configure the following environment variables:
 
     ```sh
-    terraform init -backend-config=cloud.tfbackend
+    export TF_CLOUD_ORGANIZATION="your_terraform_cloud_org"
+    export TF_WORKSPACE="your_workspace_name"
     ```
 
-10. Apply.
+6. Initialize.
+
+    ```sh
+    terraform init
+    ```
+
+7. Apply.
 
     ```sh
     terraform apply
     ```
 
-11. Once apply completed, create SSH key file as you need this to SSH into the VM.
+#### Local Execution
+
+Use this method if you use your personal credential to log in Azure.
+
+1. In your Terraform workspace, go to *Settings* -> *General* and change *Execution Mode* to `Local`.
+2. In your terminal, log in to Azure using `az login` command.
+3. Make sure you switch to the right subscription.
+
+    ```sh
+    az account set --subscription "your_subscription_name"
+    ```
+
+4. Log in Terraform cloud.
+
+    ```sh
+    terraform login
+    ```
+
+5. Configure the following environment variables:
+
+    ```sh
+    export TF_CLOUD_ORGANIZATION="your_terraform_cloud_org"
+    export TF_WORKSPACE="your_workspace_name"
+    ```
+
+6. Initialize.
+
+    ```sh
+    terraform init
+    ```
+
+7. Apply.
+
+    ```sh
+    terraform apply -var resource_group_name="your_resource_group" -var suffix="your_instance_suffix"
+    ```
+
+    If you want to specify your IP address ranges, add `-var ip_address_list` like this:
+
+    ```sh
+    terraform apply -var resource_group_name="your_resource_group" -var suffix="your_instance_suffix" -var ip_address_list='["1.2.3.4/24","5.6.7.8/24"]'
+    ```
+
+### C. Configure and Connect
+
+1. Once apply completed, create SSH key file as you need this to SSH into the VM.
 
     ```sh
     terraform output -raw private_key > id_rsa
     chmod 600 id_rsa
     ```
 
-12. SSH into the VM. Note: You might need to wait a bit before you can connect.
+2. SSH into the VM. Note: You might need to wait a bit before you can connect.
 
     ```sh
     SSH_PORT="$(terraform output ssh_port)"
@@ -110,7 +173,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     Enter `yes` to confirm to connect.
 
-13. In SSH session, follow cloud-init logs.
+3. In SSH session, follow cloud-init logs.
 
     ```sh
     tail +1f /var/log/cloud-init-output.log
@@ -125,19 +188,19 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     Press <kbd>Ctrl + C</kbd> to exit from the log. Then press <kbd>Ctrl + D</kbd> to quit the SSH session.
 
-14. Download KUBECONFIG file.
+4. Download KUBECONFIG file.
 
     ```sh
     scp -i id_rsa -P $(terraform output ssh_port) azureuser@$(terraform output -json public_ip | jq -r ".fqdn"):admin.config admin.config
     ```
 
-15. Note the FQDN and port of your VM.
+5. Note the FQDN and port of your VM.
 
     ```sh
-    echo "server: $(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
+    echo "server: https://$(terraform output -json public_ip | jq -r ".fqdn"):$(terraform output kubectl_port)"
     ```
 
-16. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
+6. Edit the `admin.config` file that you download in 7 and update the field `clusters.cluster.server` with the hostname and port you note in 8.
 
     ```yaml
     apiVersion: v1
@@ -147,7 +210,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
         server: https://xxxxxxx.southeastasia.cloudapp.azure.com:2xxxx
     ```
 
-17. Test kubectl connection.
+7. Test kubectl connection.
 
     ```sh
     export KUBECONFIG=admin.config
@@ -156,53 +219,37 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 
     You should see the only node of your MicroK8s cluster and it is now ready for your use.
 
-18. You can see your server ingress public IP address using this command:
+8. You can get your server ingress public IP address using this command:
 
     ```sh
     echo "IP: $(terraform output -json public_ip | jq -r ".ip_address")"
     ```
 
-## Post-installation Recommendations
-
-### a. Enable Encryption
-
-1. Check if `EncryptionAtHost` feature is registered in the current subscription.
-
-    ```sh
-    az feature show --namespace Microsoft.Compute --name EncryptionAtHost
-    ```
-
-    Make sure the state is `Registered`
-
-    ```console
-    {
-    "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/providers/Microsoft.Features/providers/Microsoft.Compute/features/EncryptionAtHost",
-    "name": "Microsoft.Compute/EncryptionAtHost",
-    "properties": {
-        "state": "Registered"
-    },
-    "type": "Microsoft.Features/providers/features"
-    }
-    ```
-
-2. If the feature is not registed, use this command to register.
-
-    ```sh
-    az feature show --namespace Microsoft.Compute --name EncryptionAtHost
-    ```
-
-    Use the command in 1 to check the state. It might take sometime to change from `Registering` to `Registered`.
-
-    Once registered, use this command again to ensure the new settings is propagated throughtout the subscription.
-
-    ```sh
-    az provider register -n Microsoft.Compute
-    ```
-
-3. Go to Azure Portal and stop the virtual machine.
-4. Navigate to _Disks_ -> _Additonal settings_ and enable `Encryption at host` then start the virtual machine.
+9. Configure your DNS record to point to the IP address accordingly.
 
 ## Troubleshooting
+
+### EncryptionAtHost feature is not enabled
+
+Use this command to register EncryptionAtHost within your subscription.
+
+```sh
+az feature register --namespace Microsoft.Compute --name EncryptionAtHost
+```
+
+Use this command to check the state. Wait until it changes from `Registering` to `Registered`.
+
+```sh
+az feature show --namespace Microsoft.Compute --name EncryptionAtHost
+```
+
+Once the state becomes registered, use this command again to ensure the new settings is propagated throughtout the subscription.
+
+```sh
+az provider register -n Microsoft.Compute
+```
+
+Reapply again.
 
 ### Display cloud-init Output Log
 
@@ -226,9 +273,9 @@ sudo tail -F /var/log/apt/term.log
 
 ### Identify hostpath Storage Location
 
-```sh
 SSH into the VM and execute the command below then look for `Path` within `Pod Template`/`Volumes`/`pv-volume`.
 
+```sh
 sudo microk8s kubectl describe deploy/hostpath-provisioner -n kube-system
 ```
 
@@ -238,6 +285,15 @@ SSH into the VM and execute the command below.
 
 ```sh
 sudo microk8s status
+```
+
+### Start and Stop the Cluster
+
+SSH into the VM and execute either command below.
+
+```sh
+sudo microk8s start
+sudo microk8s stop
 ```
 
 ### Display Number of Upgradable Packages

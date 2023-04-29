@@ -6,7 +6,7 @@ resource "random_string" "first_character" {
   length  = 1
   special = false
   upper   = false
-  number  = false
+  numeric = false
 }
 
 resource "random_string" "six_character" {
@@ -87,12 +87,12 @@ locals {
   ssh_vm_port         = random_integer.ssh_vm.result
   enable_cert_manager = var.enable_cert_manager
 
-  ip_address          = var.ip_address_list != null ? null : coalesce(var.ip_address, chomp(data.http.ip_address.body))
-  ip_address_list     = var.ip_address_list
+  ip_address      = var.ip_address_list != null ? null : coalesce(var.ip_address, chomp(data.http.ip_address.response_body))
+  ip_address_list = var.ip_address_list
 }
 
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = "~> 0.1.1"
+  version = "~> 0.2.0"
   suffix  = [local.suffix]
 }
