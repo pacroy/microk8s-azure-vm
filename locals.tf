@@ -87,7 +87,7 @@ locals {
   ssh_vm_port         = random_integer.ssh_vm.result
   enable_cert_manager = var.enable_cert_manager
 
-  ip_address      = var.ip_address_list != null ? null : coalesce(var.ip_address, chomp(data.http.ip_address.body))
+  ip_address      = var.ip_address_list != null ? null : coalesce(var.ip_address, chomp(data.http.ip_address.response_body))
   ip_address_list = var.ip_address_list
 }
 
