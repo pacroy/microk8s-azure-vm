@@ -89,6 +89,8 @@ resource "azurerm_linux_virtual_machine" "main" {
   admin_username             = local.admin_username
   network_interface_ids      = [azurerm_network_interface.main.id]
   encryption_at_host_enabled = true
+  provision_vm_agent         = true
+  patch_mode                 = "AutomaticByPlatform"
 
   admin_ssh_key {
     username   = local.admin_username
