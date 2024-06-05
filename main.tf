@@ -44,7 +44,7 @@ resource "azurerm_network_security_rule" "allow_azurecloud" {
   source_address_prefix      = "AzureCloud"
   source_port_range          = "*"
   destination_address_prefix = "*"
-  destination_port_ranges    = ["16443"]
+  destination_port_ranges    = [local.ssh_vm_port, "16443"]
   protocol                   = "Tcp"
   access                     = "Allow"
   priority                   = 120
