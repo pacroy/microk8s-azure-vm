@@ -91,6 +91,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   encryption_at_host_enabled = true
   provision_vm_agent         = true
   patch_mode                 = "AutomaticByPlatform"
+  patch_assessment_mode      = "AutomaticByPlatform"
 
   admin_ssh_key {
     username   = local.admin_username
