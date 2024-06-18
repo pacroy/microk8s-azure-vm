@@ -13,7 +13,10 @@ runcmd:
   - |
     echo "Configuring MicroK8s at ${fqdn} (${public_ip}) ..."
     microk8s status --wait-ready
-    microk8s enable dns storage helm3
+    microk8s enable dns
+    microk8s enable hostpath-storage
+    microk8s enable helm3
+    microk8s enable registry
     sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
   - |
     echo "Generating KUBECONFIG file at /home/${admin_username}/admin.config ..."
@@ -35,7 +38,7 @@ runcmd:
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
-      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "installCRDs=true"
+      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "crds.enabled=true"
       echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
       microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
     fi
