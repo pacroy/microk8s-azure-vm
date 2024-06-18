@@ -115,3 +115,31 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   custom_data = data.cloudinit_config.init.rendered
 }
+
+
+resource "azurerm_maintenance_configuration" "main" {
+  name                     = module.naming.azurerm_maintenance_configuration.name
+  resource_group_name      = local.resource_group_name
+  location                 = local.location
+  scope                    = "InGuestPatch"
+  in_guest_user_patch_mode = "User"
+
+  window = {
+    start_date_time = "2024-06-13 00:00"
+    duration        = "01:30"
+    time_zone       = "UTC"
+    recur_every     = "Day"
+  }
+  install_patches = {
+    reboot = "IfRequired"
+    linux = {
+      classifications_to_include = ["Critical", "Security"]
+    }
+  }
+}
+
+resource "azurerm_maintenance_assignment_virtual_machine" "main" {
+  location                     = local.location
+  maintenance_configuration_id = azurerm_maintenance_configuration.main.id
+  virtual_machine_id           = azurerm_linux_virtual_machine.main.id
+}
