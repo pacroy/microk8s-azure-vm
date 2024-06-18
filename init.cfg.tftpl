@@ -13,7 +13,7 @@ runcmd:
   - |
     echo "Configuring MicroK8s at ${fqdn} (${public_ip}) ..."
     microk8s status --wait-ready
-    microk8s enable dns storage helm3
+    microk8s enable dns hostpath-storage helm3 registry
     sed -i "s/#MOREIPS/DNS.6 = ${fqdn}\nIP.3 = ${public_ip}\n#MOREIPS/" /var/snap/microk8s/current/certs/csr.conf.template
   - |
     echo "Generating KUBECONFIG file at /home/${admin_username}/admin.config ..."
