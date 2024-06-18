@@ -8,7 +8,7 @@ runcmd:
     systemctl restart sshd
   - |
     echo "Installing MicroK8s for ${admin_username} ..."
-    snap install microk8s --classic
+    snap install microk8s --classic --channel=1.28/stable
     usermod -a -G microk8s "${admin_username}"
   - |
     echo "Configuring MicroK8s at ${fqdn} (${public_ip}) ..."
