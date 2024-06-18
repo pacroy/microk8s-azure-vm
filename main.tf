@@ -66,11 +66,10 @@ resource "azurerm_virtual_network" "main" {
 }
 
 resource "azurerm_network_interface" "main" {
-  name                = module.naming.network_interface.name
-  resource_group_name = local.resource_group_name
-  location            = local.location
-
-  enable_accelerated_networking = true
+  name                           = module.naming.network_interface.name
+  resource_group_name            = local.resource_group_name
+  location                       = local.location
+  accelerated_networking_enabled = true
 
   ip_configuration {
     name                          = "ipconfig1"
