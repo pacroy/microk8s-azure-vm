@@ -130,7 +130,7 @@ resource "azurerm_maintenance_configuration" "main" {
   in_guest_user_patch_mode = "User"
 
   window {
-    start_date_time = "2024-06-13 00:00"
+    start_date_time = "${local.vm_update_schedule_start_date} 00:00"
     duration        = "01:30"
     time_zone       = "UTC"
     recur_every     = "Day"

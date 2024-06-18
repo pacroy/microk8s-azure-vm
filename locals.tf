@@ -70,22 +70,23 @@ data "http" "ip_address" {
 }
 
 locals {
-  resource_group_name = var.resource_group_name
-  location            = coalesce(var.location, data.azurerm_resource_group.main.location)
-  random_id           = "${random_string.first_character.result}${random_string.six_character.result}"
-  suffix              = coalesce(var.suffix, local.random_id)
-  public_key          = tls_private_key.main.public_key_openssh
-  admin_username      = var.admin_username
-  domain_name_label   = local.random_id
-  ssh_port            = random_integer.ssh.result
-  kubectl_port        = random_integer.kubectl.result
-  http_port           = random_integer.http.result
-  https_port          = random_integer.https.result
-  address_space       = var.address_space
-  size                = var.size
-  email               = coalesce(var.email, "${local.random_id}@mailinator.com")
-  ssh_vm_port         = random_integer.ssh_vm.result
-  enable_cert_manager = var.enable_cert_manager
+  resource_group_name           = var.resource_group_name
+  location                      = coalesce(var.location, data.azurerm_resource_group.main.location)
+  random_id                     = "${random_string.first_character.result}${random_string.six_character.result}"
+  suffix                        = coalesce(var.suffix, local.random_id)
+  public_key                    = tls_private_key.main.public_key_openssh
+  admin_username                = var.admin_username
+  domain_name_label             = local.random_id
+  ssh_port                      = random_integer.ssh.result
+  kubectl_port                  = random_integer.kubectl.result
+  http_port                     = random_integer.http.result
+  https_port                    = random_integer.https.result
+  address_space                 = var.address_space
+  size                          = var.size
+  email                         = coalesce(var.email, "${local.random_id}@mailinator.com")
+  ssh_vm_port                   = random_integer.ssh_vm.result
+  enable_cert_manager           = var.enable_cert_manager
+  vm_update_schedule_start_date = formatdate("YYYY-MM-DD", timestamp())
 
   ip_address      = var.ip_address_list != null ? null : coalesce(var.ip_address, chomp(data.http.ip_address.response_body))
   ip_address_list = var.ip_address_list
