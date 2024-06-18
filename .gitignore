@@ -47,3 +47,6 @@ admin.config
 *tfplan*
 *.tfbackend
 !cloud.tfbackend
+
+# Custom ignore
+.tmp*

@@ -66,11 +66,10 @@ resource "azurerm_virtual_network" "main" {
 }
 
 resource "azurerm_network_interface" "main" {
-  name                = module.naming.network_interface.name
-  resource_group_name = local.resource_group_name
-  location            = local.location
-
-  enable_accelerated_networking = true
+  name                           = module.naming.network_interface.name
+  resource_group_name            = local.resource_group_name
+  location                       = local.location
+  accelerated_networking_enabled = true
 
   ip_configuration {
     name                          = "ipconfig1"
@@ -89,6 +88,11 @@ resource "azurerm_linux_virtual_machine" "main" {
   admin_username             = local.admin_username
   network_interface_ids      = [azurerm_network_interface.main.id]
   encryption_at_host_enabled = true
+  provision_vm_agent         = true
+
+  patch_mode                                             = "AutomaticByPlatform"
+  patch_assessment_mode                                  = "AutomaticByPlatform"
+  bypass_platform_safety_checks_on_user_schedule_enabled = true
 
   admin_ssh_key {
     username   = local.admin_username
@@ -110,5 +114,37 @@ resource "azurerm_linux_virtual_machine" "main" {
     version   = "latest"
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   custom_data = data.cloudinit_config.init.rendered
+}
+
+
+resource "azurerm_maintenance_configuration" "main" {
+  name                     = "mc-${local.suffix}"
+  resource_group_name      = local.resource_group_name
+  location                 = local.location
+  scope                    = "InGuestPatch"
+  in_guest_user_patch_mode = "User"
+
+  window {
+    start_date_time = "${local.vm_update_schedule_start_date} 00:00"
+    duration        = "01:30"
+    time_zone       = "UTC"
+    recur_every     = "Day"
+  }
+  install_patches {
+    reboot = "IfRequired"
+    linux {
+      classifications_to_include = ["Critical", "Security"]
+    }
+  }
+}
+
+resource "azurerm_maintenance_assignment_virtual_machine" "main" {
+  location                     = local.location
+  maintenance_configuration_id = azurerm_maintenance_configuration.main.id
+  virtual_machine_id           = azurerm_linux_virtual_machine.main.id
 }
