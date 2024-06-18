@@ -263,7 +263,7 @@ tail +1f /var/log/cloud-init-output.log
 
 SSH into the VM and execute the command below.
 
-_NOTES: Starting from v2.1.0, the updates are performed daily by the Azure platform. You can check update history in the VM's console (Operations -> Updates -> History)._
+*NOTES: Starting from v2.1.0, the updates are performed daily by the Azure platform. You can check update history in the VM's console (Operations -> Updates -> History).*
 
 ```sh
 # Display upgrade log
