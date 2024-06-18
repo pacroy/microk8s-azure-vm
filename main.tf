@@ -114,6 +114,10 @@ resource "azurerm_linux_virtual_machine" "main" {
     version   = "latest"
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   custom_data = data.cloudinit_config.init.rendered
 }
 
