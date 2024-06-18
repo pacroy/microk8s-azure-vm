@@ -118,21 +118,21 @@ resource "azurerm_linux_virtual_machine" "main" {
 
 
 resource "azurerm_maintenance_configuration" "main" {
-  name                     = module.naming.azurerm_maintenance_configuration.name
+  name                     = "mc-${local.suffix}"
   resource_group_name      = local.resource_group_name
   location                 = local.location
   scope                    = "InGuestPatch"
   in_guest_user_patch_mode = "User"
 
-  window = {
+  window {
     start_date_time = "2024-06-13 00:00"
     duration        = "01:30"
     time_zone       = "UTC"
     recur_every     = "Day"
   }
-  install_patches = {
+  install_patches {
     reboot = "IfRequired"
-    linux = {
+    linux {
       classifications_to_include = ["Critical", "Security"]
     }
   }
