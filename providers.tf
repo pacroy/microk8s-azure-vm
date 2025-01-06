@@ -3,25 +3,26 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~>3.108.0"
+      version = "~>4.14.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~>3.5.1"
+      version = "~>3.6.3"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "~>4.0.4"
+      version = "~>4.0.6"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
-      version = "~>2.3.2"
+      version = "~>2.3.5"
     }
     http = {
       source  = "hashicorp/http"
-      version = "~>3.3.0"
+      version = "~>3.4.5"
     }
   }
+  required_version = "~> 1.10.0"
 }
 
 provider "azurerm" {

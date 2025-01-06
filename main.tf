@@ -59,9 +59,9 @@ resource "azurerm_virtual_network" "main" {
   address_space = [local.address_space]
 
   subnet {
-    name           = "default"
-    address_prefix = cidrsubnet(local.address_space, 8, 0)
-    security_group = azurerm_network_security_group.default.id
+    name             = "default"
+    address_prefixes = [cidrsubnet(local.address_space, 8, 0)]
+    security_group   = azurerm_network_security_group.default.id
   }
 }
 
@@ -75,7 +75,7 @@ resource "azurerm_network_interface" "main" {
     name                          = "ipconfig1"
     subnet_id                     = one(azurerm_virtual_network.main.subnet).id
     private_ip_address_allocation = "Static"
-    private_ip_address            = cidrhost(one(azurerm_virtual_network.main.subnet).address_prefix, 4)
+    private_ip_address            = cidrhost(one(azurerm_virtual_network.main.subnet).address_prefixes[0], 4)
   }
 }
 
