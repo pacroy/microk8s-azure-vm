@@ -59,9 +59,9 @@ resource "azurerm_virtual_network" "main" {
   address_space = [local.address_space]
 
   subnet {
-    name           = "default"
-    address_prefix = cidrsubnet(local.address_space, 8, 0)
-    security_group = azurerm_network_security_group.default.id
+    name             = "default"
+    address_prefixes = [cidrsubnet(local.address_space, 8, 0)]
+    security_group   = azurerm_network_security_group.default.id
   }
 }
 
