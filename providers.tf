@@ -1,5 +1,4 @@
 terraform {
-  cloud {}
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"

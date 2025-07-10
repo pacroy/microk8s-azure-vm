@@ -108,9 +108,9 @@ resource "azurerm_linux_virtual_machine" "main" {
   }
 
   source_image_reference {
-    offer     = "0001-com-ubuntu-server-focal"
+    offer     = "0001-com-ubuntu-server-jammy"
     publisher = "canonical"
-    sku       = "20_04-lts-gen2"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 
