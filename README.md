@@ -315,8 +315,9 @@ Starting from version 2.4.0, this project migrated from the community-maintained
 **Why the migration?**
 
 The Kubernetes SIG Network announced the retirement of `ingress-nginx` effective March 2026. After this date, `ingress-nginx` will receive:
+
 - ❌ No new releases
-- ❌ No bugfixes  
+- ❌ No bugfixes
 - ❌ No security updates
 
 The F5 NGINX Ingress Controller is actively maintained and recommended by NGINX/F5 as the successor.
@@ -329,13 +330,13 @@ If you have an existing deployment using `ingress-nginx`, you have two options:
 2. **Manual migration** - Follow these steps to migrate existing workloads:
 
    a. Deploy a new cluster using the updated Terraform configuration
-   
+
    b. Both controllers support the same `ingressClass: nginx`, so existing Ingress resources should work without modification
-   
+
    c. Update your DNS records to point to the new cluster's IP
-   
+
    d. Verify all ingress resources and certificates are working correctly
-   
+
    e. Decommission the old cluster
 
 **Compatibility Notes:**
