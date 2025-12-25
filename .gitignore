@@ -50,3 +50,5 @@ admin.config
 
 # Custom ignore
 .tmp*
+*.zip
+LICENSE.txt
