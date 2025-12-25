@@ -290,8 +290,11 @@ If you need to preserve your existing workloads, you can manually migrate:
    ```
 
 6. Update your Ingress resources (if needed):
-   
-   F5 NGINX Ingress Controller is compatible with standard Kubernetes Ingress resources. Most Ingress configurations will work without modification. However, if you used ingress-nginx specific annotations, you may need to update them. See the [F5 NGINX Ingress Controller annotation documentation](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/advanced-configuration-with-annotations/) for details.
+
+   F5 NGINX Ingress Controller is compatible with standard Kubernetes Ingress resources. Most Ingress
+   configurations will work without modification. However, if you used ingress-nginx specific annotations,
+   you may need to update them. See the [F5 NGINX Ingress Controller annotation documentation](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/advanced-configuration-with-annotations/)
+   for details.
 
 #### Why This Change?
 
