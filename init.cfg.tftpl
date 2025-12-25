@@ -35,7 +35,9 @@ runcmd:
       --set "controller.service.type=NodePort" \
       --set "controller.service.httpPort.nodePort=${http_port}" \
       --set "controller.service.httpsPort.nodePort=${https_port}" \
-      --set "controller.ingressClass=nginx"
+      --set "controller.ingressClass.name=nginx" \
+      --set "controller.ingressClass.create=true" \
+      --set "controller.ingressClass.setAsDefaultIngress=false"
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
