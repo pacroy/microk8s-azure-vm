@@ -25,13 +25,13 @@ runcmd:
     chmod 600 /home/${admin_username}/admin.config
   - |
     echo "Configuring helm3 ..."
-    microk8s helm3 repo add nginx-stable https://helm.nginx.com/stable
+    microk8s helm3 repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
     microk8s helm3 repo add jetstack https://charts.jetstack.io
     microk8s helm3 repo add pacroy https://pacroy.github.io/helm-repo
     microk8s helm3 repo update
     sleep 10
-    echo "Install nginx-ingress at port ${http_port}/${https_port} ..."
-    microk8s helm3 install nginx-ingress nginx-stable/nginx-ingress --namespace nginx-ingress --create-namespace \
+    echo "Install ingress-nginx at port ${http_port}/${https_port} ..."
+    microk8s helm3 install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace \
       --set "controller.service.type=NodePort" \
       --set "controller.service.nodePorts.http=${http_port}" \
       --set "controller.service.nodePorts.https=${https_port}" \
@@ -39,9 +39,7 @@ runcmd:
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
-      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace \
-        --set "crds.enabled=true" \
-        --set "config.featureGates.ACMEHTTP01IngressPathTypeExact=false"
+      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "crds.enabled=true"
       echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
       microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
     fi

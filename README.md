@@ -10,7 +10,7 @@ The following resources will be created:
 
 - A virtual network with one `default` subnet associated with a network security group that allow:
   - Incoming SSH (port 22) and kubectl (port 16443) traffics from the specified IP address or range to the VM
-  - Incoming HTTP and HTTPs traffics from the Internet to randomized NodePorts of the F5 NGINX Ingress Controller
+  - Incoming HTTP and HTTPs traffics from the Internet to randomized NodePorts of the nginx ingress controller
 - A Linux virtual machine (Ubuntu 20.04 LTS) deployed in the `default` subnet.
 - A public IP for the public load balancer.
 - A public load balancer that will route:
@@ -28,7 +28,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 - Enable dns, storage, and helm3 plugin services
 - Configure the cluster IP and DNS and generate KUBECONFIG file
 - Use [Helm](https://helm.sh/) to install:
-  - [F5 NGINX Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/) (formerly migrated from the deprecated ingress-nginx)
+  - [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
   - [cert-manager](https://cert-manager.io/docs/)
   - [Let's Encrypt](https://letsencrypt.org/) Production ACME [cluster-issuer](https://github.com/pacroy/cluster-issuer-helm)
 - Configure unattended OS upgrades
@@ -226,83 +226,6 @@ Use this method if you use your personal credential to log in Azure.
     ```
 
 9. Configure your DNS record to point to the IP address accordingly.
-
-## Migration Guide
-
-### Ingress-NGINX to F5 NGINX Ingress Controller
-
-As of December 2024, this project has been migrated from the deprecated `ingress-nginx` controller to the actively maintained **F5 NGINX Ingress Controller** in response to the [Ingress NGINX retirement announcement](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/).
-
-#### For New Deployments
-
-No action is needed. New deployments will automatically use F5 NGINX Ingress Controller.
-
-#### For Existing Deployments
-
-If you have an existing MicroK8s cluster deployed using an earlier version of this project, you have two options:
-
-**Option 1: Redeploy (Recommended)**
-
-The simplest approach is to destroy and recreate your infrastructure:
-
-```sh
-terraform destroy
-terraform apply
-```
-
-**Option 2: Manual Migration**
-
-If you need to preserve your existing workloads, you can manually migrate:
-
-1. SSH into your VM:
-   ```sh
-   ssh -i id_rsa -l azureuser -p $(terraform output ssh_port) $(terraform output -json public_ip | jq -r ".fqdn")
-   ```
-
-2. Uninstall the old ingress-nginx controller:
-   ```sh
-   microk8s helm3 uninstall ingress-nginx --namespace ingress-nginx
-   ```
-
-3. Add the F5 NGINX Helm repository:
-   ```sh
-   microk8s helm3 repo add nginx-stable https://helm.nginx.com/stable
-   microk8s helm3 repo update
-   ```
-
-4. Install F5 NGINX Ingress Controller with the same port configuration:
-   ```sh
-   # Get the current HTTP and HTTPS ports
-   HTTP_PORT=$(microk8s kubectl get svc -n ingress-nginx -o jsonpath='{.items[0].spec.ports[?(@.name=="http")].nodePort}')
-   HTTPS_PORT=$(microk8s kubectl get svc -n ingress-nginx -o jsonpath='{.items[0].spec.ports[?(@.name=="https")].nodePort}')
-   
-   # Install F5 NGINX Ingress Controller
-   microk8s helm3 install nginx-ingress nginx-stable/nginx-ingress --namespace nginx-ingress --create-namespace \
-     --set "controller.service.type=NodePort" \
-     --set "controller.service.nodePorts.http=${HTTP_PORT}" \
-     --set "controller.service.nodePorts.https=${HTTPS_PORT}"
-   ```
-
-5. Verify the installation:
-   ```sh
-   microk8s kubectl get pods -n nginx-ingress
-   microk8s kubectl get svc -n nginx-ingress
-   ```
-
-6. Update your Ingress resources (if needed):
-
-   F5 NGINX Ingress Controller is compatible with standard Kubernetes Ingress resources. Most Ingress
-   configurations will work without modification. However, if you used ingress-nginx specific annotations,
-   you may need to update them. See the [F5 NGINX Ingress Controller annotation documentation](https://docs.nginx.com/nginx-ingress-controller/configuration/ingress-resources/advanced-configuration-with-annotations/)
-   for details.
-
-#### Why This Change?
-
-The Kubernetes SIG Network announced the retirement of ingress-nginx, effective March 2026. After this date, ingress-nginx will receive no new releases, bugfixes, or security updates. F5 NGINX Ingress Controller is the actively maintained alternative officially supported by NGINX (F5), providing continued updates and security patches.
-
-For more information, see:
-- [Ingress NGINX Retirement Announcement](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/)
-- [F5 NGINX Ingress Controller Migration Guide](https://docs.nginx.com/nginx-ingress-controller/install/migrate-ingress-nginx/)
 
 ## Troubleshooting
 
