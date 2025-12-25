@@ -34,8 +34,7 @@ runcmd:
     microk8s helm3 install nginx-ingress nginx-stable/nginx-ingress --namespace nginx-ingress --create-namespace \
       --set "controller.service.type=NodePort" \
       --set "controller.service.nodePorts.http=${http_port}" \
-      --set "controller.service.nodePorts.https=${https_port}" \
-      --set "controller.config.strict-validate-path-type=false"
+      --set "controller.service.nodePorts.https=${https_port}"
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
