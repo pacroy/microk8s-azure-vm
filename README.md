@@ -10,7 +10,7 @@ The following resources will be created:
 
 - A virtual network with one `default` subnet associated with a network security group that allow:
   - Incoming SSH (port 22) and kubectl (port 16443) traffics from the specified IP address or range to the VM
-  - Incoming HTTP and HTTPs traffics from the Internet to randomized NodePorts of the nginx ingress controller
+  - Incoming HTTP and HTTPs traffics from the Internet to randomized NodePorts of the NGINX ingress controller
 - A Linux virtual machine (Ubuntu 20.04 LTS) deployed in the `default` subnet.
 - A public IP for the public load balancer.
 - A public load balancer that will route:
@@ -28,7 +28,7 @@ The Linux virtual machine will also be initialized using [cloud-init](https://cl
 - Enable dns, storage, and helm3 plugin services
 - Configure the cluster IP and DNS and generate KUBECONFIG file
 - Use [Helm](https://helm.sh/) to install:
-  - [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
+  - [NGINX Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/) (F5 NGINX)
   - [cert-manager](https://cert-manager.io/docs/)
   - [Let's Encrypt](https://letsencrypt.org/) Production ACME [cluster-issuer](https://github.com/pacroy/cluster-issuer-helm)
 - Configure unattended OS upgrades
@@ -305,3 +305,48 @@ SSH into the VM and execute the command below.
 ```sh
 /usr/lib/update-notifier/apt-check --human-readable
 ```
+
+## Migration Notes
+
+### Ingress Controller Migration (v2.4.0+)
+
+Starting from version 2.4.0, this project migrated from the community-maintained `ingress-nginx` to the officially supported [F5 NGINX Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/) (`nginx-ingress`).
+
+**Why the migration?**
+
+The Kubernetes SIG Network announced the retirement of `ingress-nginx` effective March 2026. After this date, `ingress-nginx` will receive:
+- ❌ No new releases
+- ❌ No bugfixes  
+- ❌ No security updates
+
+The F5 NGINX Ingress Controller is actively maintained and recommended by NGINX/F5 as the successor.
+
+**For existing users:**
+
+If you have an existing deployment using `ingress-nginx`, you have two options:
+
+1. **Deploy fresh infrastructure** - The recommended approach if possible
+2. **Manual migration** - Follow these steps to migrate existing workloads:
+
+   a. Deploy a new cluster using the updated Terraform configuration
+   
+   b. Both controllers support the same `ingressClass: nginx`, so existing Ingress resources should work without modification
+   
+   c. Update your DNS records to point to the new cluster's IP
+   
+   d. Verify all ingress resources and certificates are working correctly
+   
+   e. Decommission the old cluster
+
+**Compatibility Notes:**
+
+- ✅ Works with cert-manager 1.18+ and 1.19+
+- ✅ Supports standard Kubernetes Ingress resources
+- ✅ Uses the same `ingressClass: nginx` for backward compatibility
+- ✅ Compatible with Let's Encrypt ACME HTTP-01 challenges
+
+**References:**
+
+- [Ingress NGINX Retirement Announcement](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/)
+- [Migration Guide from ingress-nginx to NGINX Ingress Controller](https://docs.nginx.com/nginx-ingress-controller/install/migrate-ingress-nginx/)
+- [NGINX Ingress Controller Documentation](https://docs.nginx.com/nginx-ingress-controller/)
