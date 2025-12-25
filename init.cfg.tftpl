@@ -25,16 +25,17 @@ runcmd:
     chmod 600 /home/${admin_username}/admin.config
   - |
     echo "Configuring helm3 ..."
-    microk8s helm3 repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    microk8s helm3 repo add nginx-stable https://helm.nginx.com/stable
     microk8s helm3 repo add jetstack https://charts.jetstack.io
     microk8s helm3 repo add pacroy https://pacroy.github.io/helm-repo
     microk8s helm3 repo update
     sleep 10
-    echo "Install ingress-nginx at port ${http_port}/${https_port} ..."
-    microk8s helm3 install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace \
+    echo "Install NGINX Ingress Controller at port ${http_port}/${https_port} ..."
+    microk8s helm3 install nginx-ingress nginx-stable/nginx-ingress --namespace nginx-ingress --create-namespace \
       --set "controller.service.type=NodePort" \
-      --set "controller.service.nodePorts.http=${http_port}" \
-      --set "controller.service.nodePorts.https=${https_port}"
+      --set "controller.service.httpPort.nodePort=${http_port}" \
+      --set "controller.service.httpsPort.nodePort=${https_port}" \
+      --set "controller.ingressClass=nginx"
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
