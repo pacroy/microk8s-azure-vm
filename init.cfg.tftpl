@@ -38,7 +38,9 @@ runcmd:
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
-      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "crds.enabled=true"
+      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace \
+        --set "crds.enabled=true" \
+        --set "config.featureGates.ACMEHTTP01IngressPathTypeExact=false"
       echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
       microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
     fi
