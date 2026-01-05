@@ -37,7 +37,8 @@ runcmd:
       --set "controller.service.httpsPort.nodePort=${https_port}" \
       --set "controller.ingressClass.name=nginx" \
       --set "controller.ingressClass.create=true" \
-      --set "controller.ingressClass.setAsDefaultIngress=false"
+      --set "controller.ingressClass.setAsDefaultIngress=false" \
+      --set "controller.config.entries.proxy-body-size=10m"
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
