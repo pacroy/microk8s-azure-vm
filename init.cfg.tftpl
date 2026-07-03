@@ -37,11 +37,12 @@ runcmd:
       --set "controller.service.httpsPort.nodePort=${https_port}" \
       --set "controller.ingressClass.name=nginx" \
       --set "controller.ingressClass.create=true" \
-      --set "controller.ingressClass.setAsDefaultIngress=false"
+      --set "controller.ingressClass.setAsDefaultIngress=false" \
+      --version "~5.13.0"
   - |
     if [ "${enable_cert_manager}" = "true" ]; then
       echo "Installing cert-manager ..."
-      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "crds.enabled=true"
+      microk8s helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set "crds.enabled=true" --version "~1.15.0"
       echo "Installing Let's Encrypt cluster-issuer with email ${email} ..."
       microk8s helm3 install cluster-issuer pacroy/cluster-issuer --namespace cert-manager --set "email=${email}"
     fi

@@ -28,9 +28,9 @@ jobs:
     environment: azure
     steps:
       - name: Checkout self
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ env.AZURE_CLIENT_ID }}
           tenant-id: ${{ env.AZURE_TENANT_ID }}
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-            terraform_version: "~1.13.0"
+            terraform_version: "~1.15.0"
             terraform_wrapper: false
       - name: Check Format
         shell: bash
