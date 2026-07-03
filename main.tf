@@ -93,7 +93,6 @@ resource "azurerm_linux_virtual_machine" "main" {
   patch_mode                                             = "AutomaticByPlatform"
   patch_assessment_mode                                  = "AutomaticByPlatform"
   bypass_platform_safety_checks_on_user_schedule_enabled = true
-  vm_agent_platform_updates_enabled                      = true
 
   admin_ssh_key {
     username   = local.admin_username
