@@ -179,12 +179,7 @@ Use this method if you use your personal credential to log in Azure.
     tail +1f /var/log/cloud-init-output.log
     ```
 
-    Wait until it finishes when you see something like this:
-
-    ```console
-    Cloud-init v. xx.xx-xubuntux running 'modules:final' at Xxx, nn Mmm YYYY hh:mm:ss +0000. Up nn.dd seconds.
-    Cloud-init v. xx.xx-xubuntux finished at Xxx, nn Mmm YYYY hh:mm:ss +0000. Datasource DataSourceAzure [seed=/dev/sr0]. Up nnn.dd seconds.
-    ```
+    Wait until it finishes and you see the final `Cloud-init v. ... finished at ... Datasource DataSourceAzure ...` line in the output.
 
     Press <kbd>Ctrl + C</kbd> to exit from the log. Then press <kbd>Ctrl + D</kbd> to quit the SSH session.
 
