@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository contains a Terraform project that deploys and configures a single-node MicroK8s Kubernetes cluster on an Azure VM. The infrastructure includes networking (Virtual Network, Network Security Groups, Public IP), a Linux VM (Ubuntu 20.04), a public load balancer, and cloud-init configuration for automatic setup of MicroK8s, ingress-nginx, cert-manager, and Let's Encrypt.
+This repository contains a Terraform project that deploys and configures a single-node MicroK8s Kubernetes cluster on an Azure VM. The infrastructure includes networking (Virtual Network, Network Security Groups, Public IP), a Linux VM (Ubuntu 24.04 LTS), a public load balancer, and cloud-init configuration for automatic setup of MicroK8s, ingress-nginx, cert-manager, and Let's Encrypt.
 
 ## Build, Test, and Lint Commands
 

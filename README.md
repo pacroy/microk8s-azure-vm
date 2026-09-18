@@ -11,7 +11,7 @@ The following resources will be created:
 - A virtual network with one `default` subnet associated with a network security group that allow:
   - Incoming SSH (port 22) and kubectl (port 16443) traffics from the specified IP address or range to the VM
   - Incoming HTTP and HTTPs traffics from the Internet to randomized NodePorts of the NGINX ingress controller
-- A Linux virtual machine (Ubuntu 20.04 LTS) deployed in the `default` subnet.
+- A Linux virtual machine (Ubuntu 24.04 LTS) deployed in the `default` subnet.
 - A public IP for the public load balancer.
 - A public load balancer that will route:
   - Incoming SSH traffics from a ramdom port (20000-24999) to VM random SSH port (10001-16442).
@@ -182,8 +182,8 @@ Use this method if you use your personal credential to log in Azure.
     Wait until it finishes when you see something like this:
 
     ```console
-    Cloud-init v. 21.4-0ubuntu1~20.04.1 running 'modules:final' at Xxx, nn Mmm YYYY hh:mm:ss +0000. Up nn.dd seconds.
-    Cloud-init v. 21.4-0ubuntu1~20.04.1 finished at Xxx, nn Mmm YYYY hh:mm:ss +0000. Datasource DataSourceAzure [seed=/dev/sr0].  Up nnn.dd seconds
+    Cloud-init v. xx.xx-xubuntux running 'modules:final' at Xxx, nn Mmm YYYY hh:mm:ss +0000. Up nn.dd seconds.
+    Cloud-init v. xx.xx-xubuntux finished at Xxx, nn Mmm YYYY hh:mm:ss +0000. Datasource DataSourceAzure [seed=/dev/sr0]. Up nnn.dd seconds.
     ```
 
     Press <kbd>Ctrl + C</kbd> to exit from the log. Then press <kbd>Ctrl + D</kbd> to quit the SSH session.
