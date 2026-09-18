@@ -108,9 +108,9 @@ resource "azurerm_linux_virtual_machine" "main" {
   }
 
   source_image_reference {
-    offer     = "ubuntu-24_04-lts"
+    offer     = "0001-com-ubuntu-server-noble"
     publisher = "Canonical"
-    sku       = "server"
+    sku       = "24_04-lts-gen2"
     version   = "latest"
   }
 
