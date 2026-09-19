@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           token: ${{ secrets.SYNC_PAT }}
-          path: "target"
+          path: 'target'
           ref: ${{ github.head_ref }}
       - name: Determine Ref
         id: get_ref
@@ -32,7 +32,7 @@ jobs:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ steps.get_ref.outputs.ref }}
           token: ${{ secrets.SYNC_PAT }}
-          path: "source"
+          path: 'source'
       - name: Print files and directories
         shell: bash
         run: tree -aI "\.git" "$(pwd)"
