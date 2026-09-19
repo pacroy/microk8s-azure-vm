@@ -14,8 +14,8 @@ The following resources will be created:
 - A Linux virtual machine (Ubuntu 24.04 LTS) deployed in the `default` subnet.
 - A public IP for the public load balancer.
 - A public load balancer that will route:
-  - Incoming SSH traffics from a ramdom port (20000-24999) to VM random SSH port (10001-16442).
-  - Incoming kubectl traffics from a ramdom port (25000-29999) to VM port 16443.
+  - Incoming SSH traffics from a random port (20000-24999) to VM random SSH port (10001-16442).
+  - Incoming kubectl traffics from a random port (25000-29999) to VM port 16443.
   - Incoming HTTP traffics to a random port (30000-31999) on the VM.
   - Incoming HTTPS traffics to a random port (32000-32767) on the VM.
   - Outbound traffics from the VM to the Internet via the public IP
@@ -80,7 +80,7 @@ Use this method if you have [Azure service principal](https://learn.microsoft.co
     | Variable            | Description                                                                                     |
     | ------------------- | ----------------------------------------------------------------------------------------------- |
     | ARM_CLIENT_ID       | Azure AD application ID of  the service principal that have permissions to provision resources. |
-    | ARM_CLIENT_SECRET   | Azure AD application secret. Dont' forget to mark `Sensitive`.                                  |
+    | ARM_CLIENT_SECRET   | Azure AD application secret. Don't forget to mark `Sensitive`.                                  |
     | ARM_SUBSCRIPTION_ID | Azure subscription ID.                                                                          |
     | ARM_TENANT_ID       | Azure tenant ID.                                                                                |
 
@@ -238,7 +238,7 @@ Use this command to check the state. Wait until it changes from `Registering` to
 az feature show --namespace Microsoft.Compute --name EncryptionAtHost
 ```
 
-Once the state becomes registered, use this command again to ensure the new settings is propagated throughtout the subscription.
+Once the state becomes registered, use this command again to ensure the new settings are propagated throughout the subscription.
 
 ```sh
 az provider register -n Microsoft.Compute

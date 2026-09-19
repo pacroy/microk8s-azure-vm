@@ -40,7 +40,7 @@ variable "admin_username" {
 }
 
 variable "address_space" {
-  description = "Virtual netowrk address space in CIDR range."
+  description = "Virtual network address space in CIDR range."
   type        = string
   default     = "172.16.0.0/16"
 }

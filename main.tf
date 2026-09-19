@@ -79,6 +79,11 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.main.id
+  network_security_group_id = azurerm_network_security_group.default.id
+}
+
 resource "azurerm_linux_virtual_machine" "main" {
   name                = module.naming.linux_virtual_machine.name
   resource_group_name = local.resource_group_name
