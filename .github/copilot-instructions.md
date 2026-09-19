@@ -1,113 +1,116 @@
-# Copilot Instructions for microk8s-azure-vm
+# Copilot Instructions for gh-common-workflows
 
-## Project Overview
+## Repository Purpose
 
-This repository contains a Terraform project that deploys and configures a single-node MicroK8s Kubernetes cluster on an Azure VM. The infrastructure includes networking (Virtual Network, Network Security Groups, Public IP), a Linux VM (Ubuntu 20.04), a public load balancer, and cloud-init configuration for automatic setup of MicroK8s, ingress-nginx, cert-manager, and Let's Encrypt.
-
-## Build, Test, and Lint Commands
-
-### Format Check
-```sh
-terraform fmt -recursive -check
-```
-
-### Format Fix
-```sh
-terraform fmt -recursive
-```
-
-### Initialize Terraform (required before validate/plan/apply)
-```sh
-terraform init
-```
-
-### Validate Configuration
-```sh
-terraform validate
-```
-
-### Plan Infrastructure Changes
-```sh
-terraform plan
-```
-
-### Apply Infrastructure Changes
-```sh
-terraform apply
-```
-
-### View Linter Status
-The project uses a shared GitHub Actions linter workflow (from `pacroy/gh-common-workflows`). To verify code style locally before pushing:
-- Run `terraform fmt -recursive -check` to check formatting
-- The linter will run automatically on push and PR
+This is a centralized GitHub Actions workflows repository that serves as a **source for syncing common workflows** to multiple target repositories. The goal is to maintain workflow configurations in one place and automatically propagate them to all dependent repositories.
 
 ## Architecture
 
-The Terraform code is organized into five main files, each handling a specific aspect:
+### Workflow Structure
 
-### Logical Flow
-1. **providers.tf** - Declares Terraform version requirements and provider configurations (azurerm, random, tls, cloudinit, http)
-2. **variables.tf** - Defines all input variables with defaults (resource group, IP restrictions, VM size, etc.)
-3. **locals.tf** - Computes derived values and imports the Azure naming module for consistent resource naming
-4. **main.tf** - Creates core infrastructure (NSG rules, Virtual Network, NIC, VM with cloud-init) and data sources
-5. **loadbalancer.tf** - Creates public IP, load balancer, and inbound NAT rules for SSH, kubectl, HTTP/HTTPS
-6. **outputs.tf** - Exports important values (public IP, FQDN, ports, keys)
+**Public Workflows** (distributed to target repos):
+- `linter.yml` - Calls reusable `wf_linter.yml`
+- `mdlink.yml` - Calls reusable `wf_mdlink.yml`
 
-### Key Components
-- **Naming Module**: Uses `Azure/naming/azurerm` to standardize resource names with a suffix
-- **Random Port Generation**: Randomizes SSH (20000-24999), kubectl (25000-29999), HTTP (30000-31999), and HTTPS (32000-32767) ports on the load balancer
-- **Cloud-init Configuration**: Template file `init.cfg.tftpl` defines automatic provisioning (MicroK8s installation, DNS/storage/helm3 setup, ingress-nginx, cert-manager, Let's Encrypt)
-- **Network Security**: Restrictive NSG rules allow SSH/kubectl only from specified IP(s), but HTTP/HTTPS from the internet
+**Reusable Workflows** (internal reference, excluded from sync):
+- `wf_linter.yml` - Implements Super-linter for code linting
+- `wf_mdlink.yml` - Implements Markdown link checking
+
+**Utility Workflows** (internal sync helpers, excluded from sync):
+- `sync.yml` - Syncs `.github/` folder to target repositories via rsync
+- `_sync_secrets.yml` - Syncs GitHub repository secrets across multiple repositories
+
+### Sync Process
+
+The sync system works by:
+1. **Source repo** (this repository) contains all workflow configurations
+2. **Target repos** include a copy of `sync.yml` to pull changes
+3. `sync.yml` uses rsync to copy `.github/` contents while **excluding**:
+   - Workflows starting with `_` (underscore)
+   - Workflows starting with `wf_` (internal reusable)
+   - Old `markdown-link-check.yml` and related directories
+4. Syncs are triggered on PR to `main` or manual `workflow_dispatch`
+5. Changes are auto-committed to target repos using git bot account
 
 ## Key Conventions
 
-### File Organization
-- Terraform files use the standard naming convention: `providers.tf`, `variables.tf`, `locals.tf`, `main.tf`, etc.
-- Resource naming uses the Azure naming module with a suffix for consistent prefixing
-- Cloud-init configuration is in `init.cfg.tftpl` using template syntax for variable substitution
+### Workflow Naming
+- **Public workflows**: No prefix (e.g., `linter.yml`)
+- **Reusable (internal)**: `wf_` prefix (e.g., `wf_linter.yml`)
+- **Utility/Admin**: `_` prefix (e.g., `_sync_secrets.yml`)
 
-### Naming Patterns
-- Resources are named with a common suffix (default: random 7-character ID) for easy identification and cleanup
-- Module outputs reference the naming module (e.g., `module.naming.virtual_network.name`)
-- Local values are heavily used to avoid repetition and centralize configuration logic
+This naming scheme ensures only public workflows are synced to target repositories.
 
-### Port Allocation Strategy
-- Ports are randomized in specific ranges to avoid conflicts:
-  - **SSH**: 20000-24999 (load balancer) → 10001-16442 (VM)
-  - **kubectl**: 25000-29999
-  - **HTTP**: 30000-31999
-  - **HTTPS**: 32000-32767
-- These ranges prevent collisions with other services and are documented in the README
+### Environment Variables
+- `SOURCE_REPO`: Full repository path (e.g., `pacroy/gh-common-workflows`)
+- `SOURCE_REF`: Git reference for source (e.g., `v1`) - allows version pinning in target repos
+- `REPO_LIST_REGEX`: When `true`, treat repository patterns as regex expressions
+- Secret patterns use regex for flexible matching (e.g., `^SYNC_PAT$`)
 
-### Configuration via Variables
-- Critical inputs (resource group, IP restrictions) are defined as variables with sensible defaults
-- The `ip_address_list` variable supersedes `ip_address` if both are provided (check for null/coalesce patterns)
-- Optional features are controlled via boolean variables (e.g., `allow_kubectl_from_azurecloud`)
+### File Exclusion in rsync
+Patterns are defined in `sync.yml` under the "Sync files" step:
+```bash
+--exclude="workflows/_*.yml" --exclude="workflows/wf_*.yml"
+rm -f "target/${folder}/workflows/_*.yml"
+rm -f "target/${folder}/workflows/wf_*.yml"
+```
 
-### Cloud-init Configuration
-- The template uses variable interpolation with `${variable_name}` syntax
-- MicroK8s plugins (dns, hostpath-storage, helm3) are enabled in the init phase
-- Helm repositories are added and ingress-nginx/cert-manager are installed automatically
-- Certificate templates are updated dynamically with the correct FQDN and public IP
+Always update both the rsync `--exclude` flags AND the explicit `rm` commands when adding new internal workflows.
 
-### Local Values
-- `locals.tf` uses coalesce patterns to provide sensible defaults and handle optional inputs
-- Computed values (like port numbers and FQDN) are centralized in locals to ensure consistency
-- Private IP allocation is static using `cidrhost()` function
+## Testing Workflows
 
-## Common Tasks
+### Dry-run Workflows
+Several workflows support `workflow_dispatch` with `dry_run` input:
+- `_sync_secrets.yml` - Use `dry_run: true` to preview changes without applying them
+- Test on a specific target repo regex pattern before rolling out
 
-### Adding a New Security Rule
-Add to `main.tf` following the pattern of existing rules. Use locals for derived port values and ensure the rule has a unique priority number.
+### Linting and Link Checking
+These are automatically triggered on:
+- Push to `main`
+- Pull requests to `main`
+- Manual `workflow_dispatch`
 
-### Changing VM Size or OS Image
-Update `variables.tf` for the size and modify `main.tf` where the image reference is defined.
+To test locally:
+- **Linting**: Super-linter is configured in `wf_linter.yml` with `VALIDATE_ALL_CODEBASE: true`
+- **Markdown links**: Configured via `.github/mdlink/mlc_config.json`
 
-### Modifying Cloud-init Configuration
-Edit `init.cfg.tftpl` using template variable syntax (e.g., `${fqdn}`, `${ssh_vm_port}`). Changes are applied on VM creation; existing VMs require manual updates or recreation.
+## GitHub Token & Permissions
 
-### Testing Changes Locally
-After running `terraform init`, use:
-- `terraform fmt -recursive -check` to verify formatting
-- `terraform validate` to check configuration syntax
-- `terraform plan` to preview changes (requires Azure credentials)
+When setting up sync in target repositories, use a Personal Access Token (`SYNC_PAT`) with:
+
+**Classic token:**
+- `repo` scope (full control of private repositories)
+- `workflow` scope (update GitHub Action workflows)
+
+**Fine-grained token:**
+- Repository > Contents: Read and write
+- Repository > Metadata: Read-only
+- Repository > Secrets: Read and write
+- Repository > Workflows: Read and write
+
+## Configuration Files
+
+- `.github/mdlink/mlc_config.json` - Markdown link checker configuration (retries, timeouts, headers)
+- `.claude/settings.local.json` - Permissions for Claude sessions in this repo
+
+## Making Changes
+
+1. Create a branch from `main`
+2. Update workflows (both public and internal)
+3. Push and create a PR to `main`
+4. Workflows auto-run on PR:
+   - Linter checks code
+   - Markdown link checker validates documentation
+   - Sync workflow shows a preview of what will sync to target repos
+5. Merge PR when ready
+6. To release updates to target repos:
+   - Create a git tag (e.g., `v1`) or update `SOURCE_REF` in target repos
+   - Target repos will pull latest changes on their next sync trigger
+
+## Key Dependencies
+
+- **actions/checkout**: v7.0.0
+- **actions/github-script**: v9.0.0
+- **super-linter/super-linter**: v8.7.0
+- **jpoehnelt/secrets-sync-action**: v1.10.0
+- **gaurav-nelson/github-action-markdown-link-check**: 1.0.17

@@ -14,8 +14,8 @@ permissions:
   contents: read
 
 env:
-  TF_INPUT: 'false'
-  TF_IN_AUTOMATION: 'true'
+  TF_INPUT: "false"
+  TF_IN_AUTOMATION: "true"
   RESOURCE_GROUP_NAME: ${{ secrets.RESOURCE_GROUP_NAME }}
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -38,8 +38,8 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-            terraform_version: "~1.15.0"
-            terraform_wrapper: false
+          terraform_version: "~1.15.0"
+          terraform_wrapper: false
       - name: Check Format
         shell: bash
         run: |
